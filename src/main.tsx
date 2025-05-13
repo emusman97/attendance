@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router';
 import { Provider } from 'react-redux';
 import './index.css';
-import { MainRoutes } from './routes/Routes';
+import { MainRoutes } from './routes';
 import { store } from './state';
 
 import '@fontsource/roboto/300.css';
