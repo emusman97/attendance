@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material';
+import { Alert, Typography } from '@mui/material';
 import { useState, type JSX } from 'react';
 import { useForm, type FieldError, type SubmitHandler } from 'react-hook-form';
 import {
@@ -8,10 +8,13 @@ import {
   PrimaryButton,
 } from '../../components';
 import { AppStrings } from '../../constants';
+import { useAppDispatch, userActions, useUserState } from '../../state';
 import styles from './styles.module.css';
 import type { SignInFormInput } from './types';
 
 export function SignInPage(): JSX.Element {
+  const { loading, error } = useUserState();
+
   const {
     formState: { errors },
     watch,
@@ -21,6 +24,7 @@ export function SignInPage(): JSX.Element {
   } = useForm<SignInFormInput>();
   const [passwordShown, setPasswordShown] = useState(false);
   const [showPasswordButtonShown, setShowPasswordButtonShown] = useState(false);
+  const dispatch = useAppDispatch();
 
   const getHelperText = (forField: FieldError | undefined) => {
     if (forField === errors.username) {
@@ -46,9 +50,17 @@ export function SignInPage(): JSX.Element {
 
   const onSubmit: SubmitHandler<SignInFormInput> = (data) => {
     const usernameValue = data.username.trim();
+    const pinCodeValue = data.pincode;
+
     if (usernameValue === '') {
       setError('username', { type: 'required' });
+      return;
     }
+
+    dispatch(userActions.clearError());
+    dispatch(
+      userActions.loginUser({ username: usernameValue, pincode: pinCodeValue })
+    );
   };
   const onPasswordFieldFocuessed = () => {
     setShowPasswordButtonShown(true);
@@ -64,13 +76,14 @@ export function SignInPage(): JSX.Element {
           {AppStrings.SignIn}
         </Typography>
 
-        {/* {false && (
+        {!!error && (
           <Alert severity="error" sx={{ mt: 4 }}>
-            {AppStrings.InvalidCreds}
+            {error}
           </Alert>
-        )} */}
+        )}
 
         <InputField
+          disabled={loading}
           sx={{ mt: 2 }}
           label={AppStrings.Username}
           placeholder={AppStrings.Username}
@@ -83,6 +96,7 @@ export function SignInPage(): JSX.Element {
           label={AppStrings.PinCode}
           helperText={getHelperText(errors.pincode)}
           inputProps={{
+            disabled: loading,
             error: !!errors.pincode,
             placeholder: AppStrings.PinCode,
             slotProps: { input: { maxLength: 4 } },
@@ -99,7 +113,13 @@ export function SignInPage(): JSX.Element {
           showPassword={passwordShown}
         />
 
-        <PrimaryButton type="submit" sx={{ mt: 2 }} text={AppStrings.SignIn} />
+        <PrimaryButton
+          loading={loading}
+          disabled={loading}
+          type="submit"
+          sx={{ mt: 2 }}
+          text={AppStrings.SignIn}
+        />
       </form>
     </AuthLayout>
   );
