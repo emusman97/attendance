@@ -1,45 +1,33 @@
 import { Alert, Typography } from '@mui/material';
 import { useEffect, useState, type JSX } from 'react';
-import { useForm, type FieldError, type SubmitHandler } from 'react-hook-form';
 import { useNavigate } from 'react-router';
-import {
-  AuthLayout,
-  InputField,
-  PasswordField,
-  PrimaryButton,
-} from '../../components';
+import { useForm, type SubmitHandler } from 'react-hook-form';
+import { AuthLayout, PasswordField, PrimaryButton } from '../../components';
 import { AppStrings } from '../../constants';
 import { useAppDispatch, userActions, useUserState } from '../../state';
 import styles from './styles.module.css';
-import type { SignInFormInput } from './types';
+import type { ChangePasswordInputs } from './types';
 import { RoutePaths } from '../../routes';
 
-export function SignInPage(): JSX.Element {
-  const { loading, error, info, firstLogin } = useUserState();
+export function ChangePasswordPage(): JSX.Element {
+  const { loading, success, error } = useUserState();
 
   const {
     formState: { errors },
     watch,
     register,
     handleSubmit,
-    setError,
-  } = useForm<SignInFormInput>();
+  } = useForm<ChangePasswordInputs>();
   const [passwordShown, setPasswordShown] = useState(false);
   const [showPasswordButtonShown, setShowPasswordButtonShown] = useState(false);
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
-  const getHelperText = (forField: FieldError | undefined) => {
-    if (forField === errors.username) {
-      if (errors.username?.type === 'required') {
-        return AppStrings.UsernameNotEmpty;
-      }
-    } else {
-      if (errors.pincode?.type === 'required') {
-        return AppStrings.PinCodeNotEmpty;
-      } else if (errors.pincode?.type === 'pattern') {
-        return AppStrings.PinCodePatternError;
-      }
+  const getHelperText = () => {
+    if (errors.pincode?.type === 'required') {
+      return AppStrings.PinCodeNotEmpty;
+    } else if (errors.pincode?.type === 'pattern') {
+      return AppStrings.PinCodePatternError;
     }
 
     return '';
@@ -51,19 +39,11 @@ export function SignInPage(): JSX.Element {
     return pinCodeValue || showPasswordButtonShown;
   };
 
-  const onSubmit: SubmitHandler<SignInFormInput> = (data) => {
-    const usernameValue = data.username.trim();
+  const onSubmit: SubmitHandler<ChangePasswordInputs> = (data) => {
     const pinCodeValue = data.pincode;
 
-    if (usernameValue === '') {
-      setError('username', { type: 'required' });
-      return;
-    }
-
     dispatch(userActions.clearError());
-    dispatch(
-      userActions.loginUser({ username: usernameValue, pincode: pinCodeValue })
-    );
+    dispatch(userActions.changePinCode(pinCodeValue));
   };
   const onPasswordFieldFocuessed = () => {
     setShowPasswordButtonShown(true);
@@ -72,20 +52,20 @@ export function SignInPage(): JSX.Element {
     setShowPasswordButtonShown(false);
   };
 
+  console.log(loading, success, error);
+
   useEffect(() => {
-    if (info) {
-      if (firstLogin) {
-        navigate(RoutePaths.ChangePassword, { replace: true });
-        dispatch(userActions.clearSuccess());
-      }
+    if (success) {
+      navigate(RoutePaths.Dashboard, { replace: true });
+      dispatch(userActions.clearSuccess());
     }
-  }, [dispatch, firstLogin, info, navigate]);
+  }, [dispatch, navigate, success]);
 
   return (
     <AuthLayout>
       <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
         <Typography className={styles.headingText} variant="h5">
-          {AppStrings.SignIn}
+          {AppStrings.ChangePassword}
         </Typography>
 
         {!!error && (
@@ -94,19 +74,10 @@ export function SignInPage(): JSX.Element {
           </Alert>
         )}
 
-        <InputField
-          disabled={loading}
-          sx={{ mt: 2 }}
-          label={AppStrings.Username}
-          placeholder={AppStrings.Username}
-          error={!!errors.username}
-          helperText={getHelperText(errors.username)}
-          {...register('username', { required: true })}
-        />
         <PasswordField
           containerProps={{ sx: { mt: 2, mb: 2 } }}
           label={AppStrings.PinCode}
-          helperText={getHelperText(errors.pincode)}
+          helperText={getHelperText()}
           inputProps={{
             disabled: loading,
             error: !!errors.pincode,
@@ -130,7 +101,7 @@ export function SignInPage(): JSX.Element {
           disabled={loading}
           type="submit"
           sx={{ mt: 2 }}
-          text={AppStrings.SignIn}
+          text={AppStrings.Confirm}
         />
       </form>
     </AuthLayout>

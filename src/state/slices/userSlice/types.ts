@@ -5,6 +5,7 @@ export interface UserState {
   firstLogin: boolean;
   isAuthenticated: boolean;
   loading: boolean;
+  success: true | null;
   error: string | null;
 }
 

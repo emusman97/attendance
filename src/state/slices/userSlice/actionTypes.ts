@@ -1,1 +1,4 @@
-export const UserActionTypes = { login: 'user/login' } as const;
+export const UserActionTypes = {
+  login: 'user/login',
+  changePinCode: 'user/change-pincode',
+} as const;

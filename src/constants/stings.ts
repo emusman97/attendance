@@ -7,4 +7,8 @@ export const AppStrings = {
   PinCodeNotEmpty: 'Pin code cannot be emnpty',
   PinCodePatternError: 'Pin code must be 4 digits',
   InvalidCreds: 'Invalid credentials',
+  ChangePassword: 'Change Password',
+  Confirm: 'Confirm',
+  NoUserLoggedIn: 'No user is looged in',
+  SomethingWentWrong: 'Something went wrong',
 } as const;

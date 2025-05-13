@@ -8,4 +8,9 @@ export interface User {
   passwordChanged?: boolean;
 }
 
+export type UserId = NonNullable<User['id']>;
+
 export type Users = User[];
+
+export type UserRole = 'admin' | 'user';
+export type UserRoles = UserRole[];
