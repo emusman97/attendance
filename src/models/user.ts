@@ -6,6 +6,7 @@ export interface User {
   email?: string;
   pincode?: string;
   passwordChanged?: boolean;
+  role?: UserRole;
 }
 
 export type UserId = NonNullable<User['id']>;

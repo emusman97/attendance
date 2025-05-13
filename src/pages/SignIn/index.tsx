@@ -76,8 +76,10 @@ export function SignInPage(): JSX.Element {
     if (info) {
       if (firstLogin) {
         navigate(RoutePaths.ChangePassword, { replace: true });
-        dispatch(userActions.clearSuccess());
+      } else {
+        navigate(RoutePaths.Dashboard, { replace: true });
       }
+      dispatch(userActions.clearSuccess());
     }
   }, [dispatch, firstLogin, info, navigate]);
 
