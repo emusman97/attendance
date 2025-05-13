@@ -1,5 +1,6 @@
 import { Typography } from '@mui/material';
-import type { JSX } from 'react';
+import { useState, type JSX } from 'react';
+import { useForm, type FieldError, type SubmitHandler } from 'react-hook-form';
 import {
   AuthLayout,
   InputField,
@@ -8,27 +9,97 @@ import {
 } from '../../components';
 import { AppStrings } from '../../constants';
 import styles from './styles.module.css';
+import type { SignInFormInput } from './types';
 
 export function SignInPage(): JSX.Element {
+  const {
+    formState: { errors },
+    watch,
+    register,
+    handleSubmit,
+    setError,
+  } = useForm<SignInFormInput>();
+  const [passwordShown, setPasswordShown] = useState(false);
+  const [showPasswordButtonShown, setShowPasswordButtonShown] = useState(false);
+
+  const getHelperText = (forField: FieldError | undefined) => {
+    if (forField === errors.username) {
+      if (errors.username?.type === 'required') {
+        return AppStrings.UsernameNotEmpty;
+      }
+    } else {
+      if (errors.pincode?.type === 'required') {
+        return AppStrings.PinCodeNotEmpty;
+      } else if (errors.pincode?.type === 'pattern') {
+        return AppStrings.PinCodePatternError;
+      }
+    }
+
+    return '';
+  };
+  const togglePasswordShown = () => setPasswordShown((shown) => !shown);
+  const canShowIcon = () => {
+    const pinCodeValue = watch('pincode')?.trim() !== '';
+
+    return pinCodeValue || showPasswordButtonShown;
+  };
+
+  const onSubmit: SubmitHandler<SignInFormInput> = (data) => {
+    const usernameValue = data.username.trim();
+    if (usernameValue === '') {
+      setError('username', { type: 'required' });
+    }
+  };
+  const onPasswordFieldFocuessed = () => {
+    setShowPasswordButtonShown(true);
+  };
+  const onPasswordFieldBlurred = () => {
+    setShowPasswordButtonShown(false);
+  };
+
   return (
     <AuthLayout>
-      <form className={styles.container}>
+      <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
         <Typography className={styles.headingText} variant="h5">
           {AppStrings.SignIn}
         </Typography>
+
+        {/* {false && (
+          <Alert severity="error" sx={{ mt: 4 }}>
+            {AppStrings.InvalidCreds}
+          </Alert>
+        )} */}
 
         <InputField
           sx={{ mt: 2 }}
           label={AppStrings.Username}
           placeholder={AppStrings.Username}
+          error={!!errors.username}
+          helperText={getHelperText(errors.username)}
+          {...register('username', { required: true })}
         />
         <PasswordField
           containerProps={{ sx: { mt: 2, mb: 2 } }}
           label={AppStrings.PinCode}
-          inputProps={{ placeholder: AppStrings.PinCode }}
+          helperText={getHelperText(errors.pincode)}
+          inputProps={{
+            error: !!errors.pincode,
+            placeholder: AppStrings.PinCode,
+            slotProps: { input: { maxLength: 4 } },
+            ...register('pincode', {
+              required: true,
+              maxLength: 4,
+              pattern: /[0-9]{4}/,
+            }),
+            onBlur: onPasswordFieldBlurred,
+            onFocus: onPasswordFieldFocuessed,
+          }}
+          onShowPasswordIconPress={togglePasswordShown}
+          showIcon={canShowIcon()}
+          showPassword={passwordShown}
         />
 
-        <PrimaryButton sx={{ mt: 2 }} text={AppStrings.SignIn} />
+        <PrimaryButton type="submit" sx={{ mt: 2 }} text={AppStrings.SignIn} />
       </form>
     </AuthLayout>
   );
