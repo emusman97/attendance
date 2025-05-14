@@ -1,3 +1,4 @@
+import AddIcon from '@mui/icons-material/Add';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import {
   Alert,
@@ -10,7 +11,6 @@ import {
   InputLabel,
   MenuItem,
   Pagination,
-  PaginationItem,
   Select,
   Table,
   TableBody,
@@ -19,31 +19,40 @@ import {
   TableHead,
   TableRow,
   Typography,
+  type PaginationProps,
   type SelectProps,
 } from '@mui/material';
-import AddIcon from '@mui/icons-material/Add';
 import { useState, type JSX } from 'react';
 import { AttendanceChip, InputField, MainHeader } from '../../../../components';
 import { AppStrings } from '../../../../constants';
+import { usePagination } from '../../../../hooks';
 import { UserMockService } from '../../../../mockService';
 import { useUserState } from '../../../../state';
 import { Theme } from '../../../../styles';
 import { canShowApplyLeaveButton, getInitials } from '../../../../utils';
 import { AttributeItems } from './data';
 import styles from './styles.module.css';
+import { ItemsPerPage } from './constants';
 
 export function UserDashboard(): JSX.Element {
   const { info } = useUserState();
-  const [attendance] = useState(() =>
-    UserMockService.findAttendance(info?.id ?? '')
-  );
 
   const [selectedAttrValue, setSelectedAttrValue] = useState(
     AttributeItems[0].value
   );
+  const [attendance] = useState(() =>
+    UserMockService.findAttendance(info?.id ?? '')
+  );
+  const { currentData, currentPage, goToPage } = usePagination({
+    data: attendance,
+    itemsPerPage: ItemsPerPage,
+  });
 
   const handleAttrValueChange: SelectProps['onChange'] = (event) => {
     setSelectedAttrValue(event.target.value as string);
+  };
+  const handlePageChange: PaginationProps['onChange'] = (_, page) => {
+    goToPage(page);
   };
 
   return (
@@ -128,7 +137,7 @@ export function UserDashboard(): JSX.Element {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {attendance.map((row) => (
+                {currentData.map((row) => (
                   <TableRow key={row.id}>
                     <TableCell>{row.date}</TableCell>
                     <TableCell>
@@ -143,10 +152,11 @@ export function UserDashboard(): JSX.Element {
           <Pagination
             sx={{ mt: '1rem', alignSelf: 'center' }}
             color="primary"
-            count={10}
+            count={ItemsPerPage}
             showFirstButton
             showLastButton
-            renderItem={(params) => <PaginationItem {...params} />}
+            page={currentPage}
+            onChange={handlePageChange}
           />
         </Box>
       </Container>
