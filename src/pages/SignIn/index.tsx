@@ -23,9 +23,7 @@ export function SignInPage(): JSX.Element {
     register,
     handleSubmit,
     setError,
-  } = useForm<SignInFormInput>({
-    defaultValues: { username: 'test', pincode: '0000' },
-  });
+  } = useForm<SignInFormInput>({});
   const [passwordShown, setPasswordShown] = useState(false);
   const [showPasswordButtonShown, setShowPasswordButtonShown] = useState(false);
   const dispatch = useAppDispatch();
@@ -76,7 +74,7 @@ export function SignInPage(): JSX.Element {
 
   useEffect(() => {
     if (info) {
-      if (false && firstLogin) {
+      if (firstLogin) {
         navigate(RoutePaths.ChangePassword, { replace: true });
       } else {
         navigate(RoutePaths.Dashboard, { replace: true });
