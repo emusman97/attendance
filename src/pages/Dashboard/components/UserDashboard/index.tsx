@@ -43,7 +43,7 @@ export function UserDashboard(): JSX.Element {
   const [attendance] = useState(() =>
     UserMockService.findAttendance(info?.id ?? '')
   );
-  const { currentData, currentPage, goToPage } = usePagination({
+  const { currentData, currentPage, totalPages, goToPage } = usePagination({
     data: attendance,
     itemsPerPage: ItemsPerPage,
   });
@@ -152,7 +152,7 @@ export function UserDashboard(): JSX.Element {
           <Pagination
             sx={{ mt: '1rem', alignSelf: 'center' }}
             color="primary"
-            count={ItemsPerPage}
+            count={totalPages}
             showFirstButton
             showLastButton
             page={currentPage}
