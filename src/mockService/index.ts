@@ -75,12 +75,15 @@ function createUserMockService() {
     }
   };
   const findAttendance = (userId: UserId) => attendance?.[userId] ?? [];
+  const filterAttendance = (userId: UserId, by: AttendanceStatus) =>
+    findAttendance(userId)?.filter((attendance) => attendance.status === by);
   const getOfficeHours = () => officeHours;
 
   return {
     findUser,
     changePincode,
     findAttendance,
+    filterAttendance,
     getOfficeHours,
   };
 }

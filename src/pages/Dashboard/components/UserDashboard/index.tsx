@@ -2,19 +2,40 @@ import AddIcon from '@mui/icons-material/Add';
 import { Alert, Box, Button, Container, Fab, Typography } from '@mui/material';
 import { useState, type JSX } from 'react';
 import { MainHeader, PastAttendace } from '../../../../components';
-import { AppStrings } from '../../../../constants';
+import { AppStrings, AttrValues } from '../../../../constants';
+import { UserMockService } from '../../../../mockService';
 import { useUserState } from '../../../../state';
 import { Theme } from '../../../../styles';
 import { canShowApplyLeaveButton, getInitials } from '../../../../utils';
 import styles from './styles.module.css';
-import { UserMockService } from '../../../../mockService';
+import type { AttendanceStatus } from '../../../../models';
 
 export function UserDashboard(): JSX.Element {
   const { info } = useUserState();
 
-  const [attendance] = useState(() =>
+  const [attendance, setAttendace] = useState(() =>
     UserMockService.findAttendance(info?.id ?? '')
   );
+
+  const handleFilterButtonClick = (filterValue: string) => {
+    if (filterValue === AttrValues.Status) {
+      setAttendace(UserMockService.findAttendance(info?.id ?? ''));
+    } else {
+      let status: AttendanceStatus | null = null;
+
+      if (filterValue === AttrValues.Present) {
+        status = 'present';
+      } else if (filterValue === AttrValues.Absent) {
+        status = 'absent';
+      } else if (filterValue === AttrValues.Leave) {
+        status = 'leave';
+      }
+
+      if (status) {
+        setAttendace(UserMockService.filterAttendance(info?.id ?? '', status));
+      }
+    }
+  };
 
   return (
     <div className={styles.container}>
@@ -58,6 +79,7 @@ export function UserDashboard(): JSX.Element {
               mt: '2rem',
             },
           }}
+          onFilterButtonClick={handleFilterButtonClick}
         />
       </Container>
 

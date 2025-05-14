@@ -13,7 +13,7 @@ export function usePagination<T>({
 
   const totalPages = useMemo(
     () => Math.ceil(data.length / perPage),
-    [data.length, perPage]
+    [data, perPage]
   );
 
   const currentData = useMemo(() => {

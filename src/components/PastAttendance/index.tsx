@@ -1,42 +1,67 @@
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import { useState, type JSX } from 'react';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
-import Select, { type SelectProps } from '@mui/material/Select';
-import MenuItem from '@mui/material/MenuItem';
-import IconButton from '@mui/material/IconButton';
 import FilterListIcon from '@mui/icons-material/FilterList';
-import { InputField } from '../InputField';
-import { AppStrings } from '../../constants';
-import TableContainer from '@mui/material/TableContainer';
+import { Stack } from '@mui/material';
+import Box from '@mui/material/Box';
+import FormControl from '@mui/material/FormControl';
+import IconButton from '@mui/material/IconButton';
+import InputLabel from '@mui/material/InputLabel';
+import MenuItem from '@mui/material/MenuItem';
+import Pagination, { type PaginationProps } from '@mui/material/Pagination';
+import Select, { type SelectProps } from '@mui/material/Select';
 import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
-import TableCell from '@mui/material/TableCell';
-import TableBody from '@mui/material/TableBody';
-import { AttendanceChip } from '../AttendaceChip';
-import Pagination, { type PaginationProps } from '@mui/material/Pagination';
-import type { PastAttendaceProps } from './types';
-import { AttributeItems } from './data';
-import { ItemsPerPage } from './constants';
+import Typography from '@mui/material/Typography';
+import { useMemo, useState, type JSX } from 'react';
+import { AppStrings } from '../../constants';
 import { usePagination } from '../../hooks';
-import { Stack } from '@mui/material';
+import { AttendanceChip } from '../AttendaceChip';
+import { InputField, type InputFieldProps } from '../InputField';
+import { ItemsPerPage } from './constants';
+import { AttributeItems } from './data';
+import type { PastAttendaceProps } from './types';
 
 export function PastAttendace({
   containerProps,
   attendance,
+  selectedAttribute = AttributeItems[0].value,
+  searchQuery = '',
+  onSelectedAttrChange,
+  onSearchQueryChange,
+  onFilterButtonClick,
 }: PastAttendaceProps): JSX.Element {
-  const [selectedAttrValue, setSelectedAttrValue] = useState(
-    AttributeItems[0].value
-  );
+  const [query, setQuery] = useState(() => searchQuery);
+  const [attrValue, setAtrrValue] = useState<string>(() => selectedAttribute);
+
+  const filteredAttendance = useMemo(() => {
+    const searchValue = query.trim().toLocaleLowerCase();
+
+    return attendance.filter((attendance) =>
+      `${attendance.date} ${attendance.status}`
+        .toLocaleLowerCase()
+        .includes(searchValue)
+    );
+  }, [attendance, query]);
+
   const { currentData, currentPage, totalPages, goToPage } = usePagination({
-    data: attendance,
+    data: filteredAttendance,
     itemsPerPage: ItemsPerPage,
   });
 
   const handleAttrValueChange: SelectProps['onChange'] = (event) => {
-    setSelectedAttrValue(event.target.value as string);
+    const attrValue = event.target.value as string;
+    setAtrrValue(attrValue);
+    onSelectedAttrChange?.(attrValue);
+  };
+  const handleFilterButtonClick = () => {
+    onFilterButtonClick?.(attrValue);
+  };
+  const handleSearchTextChange: InputFieldProps['onChange'] = (event) => {
+    const value = event.currentTarget.value;
+    setQuery(value);
+    onSearchQueryChange?.(value);
   };
   const handlePageChange: PaginationProps['onChange'] = (_, page) => {
     goToPage(page);
@@ -54,13 +79,15 @@ export function PastAttendace({
           label={AppStrings.Search}
           placeholder={AppStrings.SearchPlaceholder}
           variant="outlined"
+          value={query}
+          onChange={handleSearchTextChange}
         />
         <FormControl sx={{ ml: '1rem', mr: '1rem', minWidth: '15%' }}>
           <InputLabel>{AppStrings.Attribute}</InputLabel>
           <Select
             autoWidth
             label={AppStrings.Attribute}
-            value={selectedAttrValue}
+            value={attrValue}
             onChange={handleAttrValueChange}
           >
             {AttributeItems.map((item) => (
@@ -71,7 +98,7 @@ export function PastAttendace({
           </Select>
         </FormControl>
 
-        <IconButton>
+        <IconButton onClick={handleFilterButtonClick}>
           <FilterListIcon />
         </IconButton>
       </Box>
