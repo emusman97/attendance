@@ -1,9 +1,10 @@
-import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 import { changePinCode, loginUser } from './thunks';
 import type { UserState } from './types';
 
 const initialState: UserState = {
   firstLogin: true,
+  info: null,
   isAuthenticated: false,
   loading: false,
   success: null,
@@ -14,8 +15,10 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setFirstLogin(state, action: PayloadAction<boolean>) {
-      state.firstLogin = action.payload;
+    logout(state) {
+      state.firstLogin = initialState.firstLogin;
+      state.info = initialState.info;
+      state.isAuthenticated = initialState.isAuthenticated;
     },
 
     clearError(state) {

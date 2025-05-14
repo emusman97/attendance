@@ -23,7 +23,7 @@ export function SignInPage(): JSX.Element {
     register,
     handleSubmit,
     setError,
-  } = useForm<SignInFormInput>();
+  } = useForm<SignInFormInput>({});
   const [passwordShown, setPasswordShown] = useState(false);
   const [showPasswordButtonShown, setShowPasswordButtonShown] = useState(false);
   const dispatch = useAppDispatch();
