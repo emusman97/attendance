@@ -64,11 +64,14 @@ function createUserMockService() {
         creds.pincode === user.pincode
     );
   const changePincode = (id: UserId, newPincode: string) => {
-    const user = users.find((user) => user.id === id);
+    const userIndex = users.findIndex((user) => user.id === id);
 
-    if (user) {
-      user.pincode = newPincode;
-      user.passwordChanged = true;
+    if (userIndex !== -1) {
+      users[userIndex] = {
+        ...users[userIndex],
+        pincode: newPincode,
+        passwordChanged: true,
+      };
     }
   };
   const findAttendance = (userId: UserId) => attendance?.[userId] ?? [];
