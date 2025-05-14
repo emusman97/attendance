@@ -1,5 +1,33 @@
-import type { UserId, Users } from '../models';
+import type { Attendances, AttendanceStatus, UserId, Users } from '../models';
 import type { UserCredentials } from '../state/slices';
+
+function generateRandomAttendance() {
+  const attendanceData: Attendances = [];
+
+  for (let i = 0; i < 1000; i++) {
+    const month = Math.floor(Math.random() * 12) + 1;
+    const day = Math.floor(Math.random() * 28) + 1; // Using 28 to avoid invalid dates
+    const date = `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/2022`;
+
+    const random = Math.random();
+    let status: AttendanceStatus;
+    if (random < 0.6) {
+      status = 'present';
+    } else if (random < 0.9) {
+      status = 'absent';
+    } else {
+      status = 'leave';
+    }
+
+    attendanceData.push({
+      id: i.toString(),
+      date,
+      status,
+    });
+  }
+
+  return attendanceData;
+}
 
 function createUserMockService() {
   const users: Users = [
@@ -20,6 +48,14 @@ function createUserMockService() {
       role: 'user',
     },
   ];
+  const attendance: Record<UserId, Attendances> = {
+    'SE-000': generateRandomAttendance(),
+  };
+  const officeHours = {
+    startTime: '09:00 AM',
+    finishTime: '6:00 PM',
+    workingHours: 8,
+  };
 
   const findUser = (creds: UserCredentials) =>
     users.find(
@@ -35,8 +71,15 @@ function createUserMockService() {
       user.passwordChanged = true;
     }
   };
+  const findAttendance = (userId: UserId) => attendance?.[userId] ?? [];
+  const getOfficeHours = () => officeHours;
 
-  return { findUser, changePincode };
+  return {
+    findUser,
+    changePincode,
+    findAttendance,
+    getOfficeHours,
+  };
 }
 
 export const UserMockService = createUserMockService();

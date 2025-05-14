@@ -1,4 +1,6 @@
 export * from './layout';
+export * from './MainHeader';
 export * from './PrimaryButton';
 export * from './PasswordField';
 export * from './InputField';
+export * from './AttendaceChip';

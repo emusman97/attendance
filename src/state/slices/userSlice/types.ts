@@ -1,7 +1,7 @@
 import type { User } from '../../../models';
 
 export interface UserState {
-  info?: User | null;
+  info: User | null;
   firstLogin: boolean;
   isAuthenticated: boolean;
   loading: boolean;
