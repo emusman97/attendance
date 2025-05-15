@@ -6,3 +6,9 @@ export interface Attendance {
   status?: AttendanceStatus;
 }
 export type Attendances = Attendance[];
+
+export interface OfficeHours {
+  startTime?: string;
+  finishTime?: string;
+  workingHours?: string;
+}

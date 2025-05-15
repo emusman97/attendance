@@ -4,6 +4,7 @@ import {
   AdminDashboardPage,
   ChangePasswordPage,
   DashboardPage,
+  SettingsPage,
   SignInPage,
 } from '../pages';
 import { RoutePaths as RouteNames } from './routePaths';
@@ -54,7 +55,7 @@ export function MainRoutes(): JSX.Element {
         <Route index element={<AdminDashboardPage />} />
         <Route path={RouteNames.Dashboard} element={<AdminDashboardPage />} />
         <Route path={RouteNames.Users} />
-        <Route path={RouteNames.Settings} />
+        <Route path={RouteNames.Settings} element={<SettingsPage />} />
       </Route>
     </Routes>
   );

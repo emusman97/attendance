@@ -51,7 +51,8 @@ export function AdminLayout(): JSX.Element {
         onOpenDrawerClick={toggleDrawer(true)}
         initials={getInitials(fname ?? '', lname ?? '')}
       />
-      <Stack>
+
+      <Stack sx={{ pt: 3, pb: 3, flex: 1 }}>
         <Outlet />
       </Stack>
     </PageLayout>

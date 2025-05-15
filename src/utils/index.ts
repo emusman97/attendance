@@ -18,7 +18,11 @@ export const canShowApplyLeaveButton = () => {
   const now = new Date();
   const officeHours = UserMockService.getOfficeHours();
 
-  const startTimeToday = parse(officeHours.startTime, 'hh:mm a', new Date());
+  const startTimeToday = parse(
+    officeHours.startTime ?? '',
+    'hh:mm a',
+    new Date()
+  );
 
   const oneHourAfterStart = addHours(startTimeToday, 1);
 
@@ -26,4 +30,14 @@ export const canShowApplyLeaveButton = () => {
     start: startTimeToday,
     end: oneHourAfterStart,
   });
+};
+
+export const safeParseNumber = (value: string, defaultValue = -1) => {
+  try {
+    const parsedValue = Number(value);
+    return isNaN(parsedValue) ? defaultValue : parsedValue;
+  } catch (error) {
+    console.log('Unable to parse ', value, error);
+    return defaultValue;
+  }
 };

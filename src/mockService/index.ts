@@ -1,4 +1,10 @@
-import type { Attendances, AttendanceStatus, UserId, Users } from '../models';
+import type {
+  Attendances,
+  AttendanceStatus,
+  OfficeHours,
+  UserId,
+  Users,
+} from '../models';
 import type { UserCredentials } from '../state/slices';
 
 function generateRandomAttendance() {
@@ -51,10 +57,10 @@ function createUserMockService() {
   const attendance: Record<UserId, Attendances> = {
     'SE-000': generateRandomAttendance(),
   };
-  const officeHours = {
+  let officeHours: OfficeHours = {
     startTime: '09:00 AM',
-    finishTime: '6:00 PM',
-    workingHours: 8,
+    finishTime: '5:00 PM',
+    workingHours: '8',
   };
 
   const findUser = (creds: UserCredentials) =>
@@ -78,6 +84,9 @@ function createUserMockService() {
   const filterAttendance = (userId: UserId, by: AttendanceStatus) =>
     findAttendance(userId)?.filter((attendance) => attendance.status === by);
   const getOfficeHours = () => officeHours;
+  const setOfficeHours = (newHours: OfficeHours) => {
+    officeHours = newHours;
+  };
 
   return {
     findUser,
@@ -85,6 +94,7 @@ function createUserMockService() {
     findAttendance,
     filterAttendance,
     getOfficeHours,
+    setOfficeHours,
   };
 }
 
