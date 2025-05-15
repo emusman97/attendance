@@ -27,4 +27,7 @@ export const AppStrings = {
   Absent: 'Absent',
   Leave: 'Leave',
   ApplyForLeave: 'Apply for leave',
+  Dashboard: 'Dashboard',
+  Users: 'Users',
+  Settings: 'Settings',
 } as const;

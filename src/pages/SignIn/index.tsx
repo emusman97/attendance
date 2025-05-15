@@ -74,7 +74,9 @@ export function SignInPage(): JSX.Element {
 
   useEffect(() => {
     if (info) {
-      if (firstLogin) {
+      if (info.role === 'admin') {
+        navigate(RoutePaths.AdminRoot, { replace: true });
+      } else if (firstLogin) {
         navigate(RoutePaths.ChangePassword, { replace: true });
       } else {
         navigate(RoutePaths.Dashboard, { replace: true });
