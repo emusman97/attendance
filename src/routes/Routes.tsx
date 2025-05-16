@@ -1,5 +1,6 @@
 import type { JSX } from 'react';
-import { Route, Routes } from 'react-router';
+import { Navigate, Route, Routes } from 'react-router';
+import { AdminLayout } from '../components';
 import {
   AdminDashboardPage,
   ChangePasswordPage,
@@ -7,10 +8,9 @@ import {
   SettingsPage,
   SignInPage,
 } from '../pages';
-import { RoutePaths as RouteNames } from './routePaths';
-import { ProtectedRoute } from './ProtectedRoute';
 import { useUserRole, useUserState } from '../state';
-import { AdminLayout } from '../components';
+import { ProtectedRoute } from './ProtectedRoute';
+import { RoutePaths as RouteNames } from './routePaths';
 
 export function MainRoutes(): JSX.Element {
   const { isAuthenticated } = useUserState();
@@ -47,15 +47,15 @@ export function MainRoutes(): JSX.Element {
           <ProtectedRoute
             isAllowed={isAuthenticated && userRole === 'admin'}
             redirectPath={RouteNames.Root}
-          >
-            <AdminLayout />
-          </ProtectedRoute>
+          />
         }
       >
-        <Route index element={<AdminDashboardPage />} />
-        <Route path={RouteNames.Dashboard} element={<AdminDashboardPage />} />
-        <Route path={RouteNames.Users} />
-        <Route path={RouteNames.Settings} element={<SettingsPage />} />
+        <Route index element={<Navigate to={RouteNames.Dashboard} replace />} />
+        <Route path={RouteNames.Dashboard} element={<AdminLayout />}>
+          <Route index element={<AdminDashboardPage />} />
+          <Route path={RouteNames.Users} />
+          <Route path={RouteNames.Settings} element={<SettingsPage />} />
+        </Route>
       </Route>
     </Routes>
   );

@@ -69,6 +69,8 @@ function createUserMockService() {
         user.fname?.toLocaleLowerCase() === creds.username &&
         creds.pincode === user.pincode
     );
+  const findUserById = (userId: UserId) =>
+    users.find((user) => user.id === userId);
   const changePincode = (id: UserId, newPincode: string) => {
     const userIndex = users.findIndex((user) => user.id === id);
 
@@ -90,6 +92,7 @@ function createUserMockService() {
 
   return {
     findUser,
+    findUserById,
     changePincode,
     findAttendance,
     filterAttendance,

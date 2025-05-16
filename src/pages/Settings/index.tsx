@@ -4,7 +4,7 @@ import Stack from '@mui/material/Stack';
 import DoneIcon from '@mui/icons-material/Done';
 import { useRef, useState, type JSX } from 'react';
 import { AppStrings, OfficeHoursTimeRegex } from '../../constants';
-import { InputField } from '../../components';
+import { InputField, NavBreadcrumbs } from '../../components';
 import { useForm, type FieldError, type SubmitHandler } from 'react-hook-form';
 import type { FormFields } from './types';
 import { differenceInHours, parse, startOfDay } from 'date-fns';
@@ -97,6 +97,7 @@ export function SettingsPage(): JSX.Element {
   return (
     <Stack flex={1}>
       <Container sx={{ flex: 1 }}>
+        <NavBreadcrumbs />
         <Stack alignItems="flex-start">
           <Typography variant="h5" fontWeight={400}>
             {AppStrings.OfficeHours}

@@ -45,4 +45,5 @@ export const AppStrings = {
   InvalidWorkingHours: 'Working Hours cannot be less than 4',
   InconsistenWorkingHours: 'Working Hours does not match start and finish time',
   OfficeHoursUpdated: 'Office hours have been updated!',
+  TodaysAvailability: 'Today’s Availability',
 } as const;

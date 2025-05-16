@@ -13,16 +13,16 @@ export const getDrawerList = () => [
   {
     title: AppStrings.Dashboard,
     icon: <HomeIcon />,
-    path: `/${RoutePaths.AdminRoot}/${RoutePaths.Dashboard}`,
+    path: RoutePaths.AdminDashboard,
   },
   {
     title: AppStrings.Users,
     icon: <GroupIcon />,
-    path: `/${RoutePaths.AdminRoot}/${RoutePaths.Users}`,
+    path: RoutePaths.AdminUsers,
   },
   {
     title: AppStrings.Settings,
     icon: <SettingsIcon />,
-    path: `/${RoutePaths.AdminRoot}/${RoutePaths.Settings}`,
+    path: RoutePaths.AdminSettings,
   },
 ];
