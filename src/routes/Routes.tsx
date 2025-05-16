@@ -7,6 +7,7 @@ import {
   DashboardPage,
   SettingsPage,
   SignInPage,
+  UsersPage,
 } from '../pages';
 import { useUserRole, useUserState } from '../state';
 import { ProtectedRoute } from './ProtectedRoute';
@@ -53,7 +54,9 @@ export function MainRoutes(): JSX.Element {
         <Route index element={<Navigate to={RouteNames.Dashboard} replace />} />
         <Route path={RouteNames.Dashboard} element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
-          <Route path={RouteNames.Users} />
+          <Route path={RouteNames.Users}>
+            <Route index element={<UsersPage />} />
+          </Route>
           <Route path={RouteNames.Settings} element={<SettingsPage />} />
         </Route>
       </Route>

@@ -25,9 +25,12 @@ import {
 import GroupIcon from '@mui/icons-material/Group';
 import { usePagination } from '../../hooks';
 import { filterByKeys } from '../../utils';
+import { useNavigate } from 'react-router';
+import { RoutePaths } from '../../routes';
 
 export function AdminDashboardPage(): JSX.Element {
   const [query, setQuery] = useState('');
+  const navigate = useNavigate();
 
   const [data] = useState(() => ({
     present: UserMockService.getUsers().slice(0, 15),
@@ -49,6 +52,9 @@ export function AdminDashboardPage(): JSX.Element {
   };
   const handlePageChange: PaginationProps['onChange'] = (_, page) => {
     goToPage(page);
+  };
+  const gotoUsersPage = () => {
+    navigate(RoutePaths.Users);
   };
 
   return (
@@ -98,7 +104,11 @@ export function AdminDashboardPage(): JSX.Element {
                 onChange={handleSearchTextChange}
               />
 
-              <Button variant="contained" startIcon={<GroupIcon />}>
+              <Button
+                variant="contained"
+                startIcon={<GroupIcon />}
+                onClick={gotoUsersPage}
+              >
                 {AppStrings.ManageUsers}
               </Button>
             </Stack>

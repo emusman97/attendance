@@ -37,7 +37,7 @@ function generateRandomAttendance() {
   return attendanceData;
 }
 
-const softwareDesignations = [
+export const SoftwareDesignations = [
   { title: 'Software Engineer', code: 'SE' },
   { title: 'Senior Software Engineer', code: 'SSE' },
   { title: 'Principal Software Engineer', code: 'PSE' },
@@ -68,7 +68,7 @@ const softwareDesignations = [
 function generateUser(index: number): User {
   const firstName = faker.person.firstName();
   const lastName = faker.person.lastName();
-  const designationObj = faker.helpers.arrayElement(softwareDesignations);
+  const designationObj = faker.helpers.arrayElement(SoftwareDesignations);
   const designation = designationObj.title;
   const designationCode = designationObj.code;
   const email = faker.internet.email({
@@ -91,7 +91,7 @@ function generateUser(index: number): User {
 }
 
 function createUserMockService() {
-  const users: Users = [
+  let users: Users = [
     {
       id: 'ADM-001',
       fname: 'Super',
@@ -152,8 +152,26 @@ function createUserMockService() {
   const setOfficeHours = (newHours: OfficeHours) => {
     officeHours = newHours;
   };
+  const addUser = (newUser: User) => {
+    users.push(newUser);
+  };
+  const deleteUser = (userId: UserId) => {
+    users = users.filter((user) => user.id !== userId);
+  };
+  const editUser = (userId: UserId, updatedUser: User) => {
+    users = users.map((user) => {
+      if (user.id === userId) {
+        return { ...user, updatedUser };
+      }
+
+      return user;
+    });
+  };
 
   return {
+    addUser,
+    editUser,
+    deleteUser,
     getUsers,
     findUser,
     findUserById,
