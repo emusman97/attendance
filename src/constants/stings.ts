@@ -46,4 +46,9 @@ export const AppStrings = {
   InconsistenWorkingHours: 'Working Hours does not match start and finish time',
   OfficeHoursUpdated: 'Office hours have been updated!',
   TodaysAvailability: 'Today’s Availability',
+  OverallStats: 'Overall Stats',
+  ManageUsers: 'Manage users',
+  Name: 'Name',
+  TotalHours: 'Total Hours',
+  DailyAverageHours: 'Daily Average Hours',
 } as const;

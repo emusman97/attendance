@@ -41,3 +41,23 @@ export const safeParseNumber = (value: string, defaultValue = -1) => {
     return defaultValue;
   }
 };
+
+export const filterByKeys = <T extends object>(
+  data: T[],
+  filterKeys: Array<keyof T>,
+  searchTerm: string
+): T[] => {
+  if (searchTerm.trim() === '') {
+    return data;
+  }
+
+  const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+  return data.filter((item) => {
+    const filterBy = filterKeys
+      .map((key) => String(item[key])?.toLocaleLowerCase())
+      .join(' ');
+
+    return filterBy.includes(lowerCaseSearchTerm);
+  });
+};

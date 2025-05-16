@@ -124,6 +124,8 @@ function createUserMockService() {
     workingHours: '8',
   };
 
+  const getUsers = () => users;
+
   const findUser = (creds: UserCredentials) =>
     users.find(
       (user) =>
@@ -152,6 +154,7 @@ function createUserMockService() {
   };
 
   return {
+    getUsers,
     findUser,
     findUserById,
     changePincode,
