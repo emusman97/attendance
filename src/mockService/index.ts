@@ -1,7 +1,9 @@
+import { faker } from '@faker-js/faker';
 import type {
   Attendances,
   AttendanceStatus,
   OfficeHours,
+  User,
   UserId,
   Users,
 } from '../models';
@@ -12,7 +14,7 @@ function generateRandomAttendance() {
 
   for (let i = 0; i < 1000; i++) {
     const month = Math.floor(Math.random() * 12) + 1;
-    const day = Math.floor(Math.random() * 28) + 1; // Using 28 to avoid invalid dates
+    const day = Math.floor(Math.random() * 28) + 1;
     const date = `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/2022`;
 
     const random = Math.random();
@@ -35,6 +37,59 @@ function generateRandomAttendance() {
   return attendanceData;
 }
 
+const softwareDesignations = [
+  { title: 'Software Engineer', code: 'SE' },
+  { title: 'Senior Software Engineer', code: 'SSE' },
+  { title: 'Principal Software Engineer', code: 'PSE' },
+  { title: 'Frontend Developer', code: 'FE' },
+  { title: 'Backend Developer', code: 'BE' },
+  { title: 'Full Stack Developer', code: 'FS' },
+  { title: 'DevOps Engineer', code: 'DO' },
+  { title: 'QA Engineer', code: 'QA' },
+  { title: 'Test Automation Engineer', code: 'TA' },
+  { title: 'Software Architect', code: 'SA' },
+  { title: 'Technical Lead', code: 'TL' },
+  { title: 'Engineering Manager', code: 'EM' },
+  { title: 'CTO', code: 'CTO' },
+  { title: 'Product Manager', code: 'PM' },
+  { title: 'Project Manager', code: 'PJM' },
+  { title: 'Scrum Master', code: 'SM' },
+  { title: 'UI/UX Designer', code: 'UX' },
+  { title: 'Data Scientist', code: 'DS' },
+  { title: 'Machine Learning Engineer', code: 'ML' },
+  { title: 'Database Administrator', code: 'DBA' },
+  { title: 'Systems Analyst', code: 'SYS' },
+  { title: 'Cloud Architect', code: 'CA' },
+  { title: 'Security Engineer', code: 'SEC' },
+  { title: 'Mobile Developer', code: 'MD' },
+  { title: 'Embedded Systems Engineer', code: 'ESE' },
+];
+
+function generateUser(index: number): User {
+  const firstName = faker.person.firstName();
+  const lastName = faker.person.lastName();
+  const designationObj = faker.helpers.arrayElement(softwareDesignations);
+  const designation = designationObj.title;
+  const designationCode = designationObj.code;
+  const email = faker.internet.email({
+    firstName,
+    lastName,
+    provider: 'example.com',
+  });
+
+  const idNumber = (index + 1).toString().padStart(3, '0');
+  const id = `${designationCode}-${idNumber}`;
+
+  return {
+    id,
+    fname: firstName,
+    lname: lastName,
+    email,
+    designation,
+    role: 'user',
+  };
+}
+
 function createUserMockService() {
   const users: Users = [
     {
@@ -53,10 +108,16 @@ function createUserMockService() {
       pincode: '0000',
       role: 'user',
     },
+    ...Array.from({ length: 999 }, (_, i) => generateUser(i)),
   ];
-  const attendance: Record<UserId, Attendances> = {
-    'SE-000': generateRandomAttendance(),
-  };
+  const attendance: Record<UserId, Attendances> = users.reduce(
+    (acc, currUser) => {
+      acc[currUser.id ?? ''] = generateRandomAttendance();
+
+      return acc;
+    },
+    {} as Record<UserId, Attendances>
+  );
   let officeHours: OfficeHours = {
     startTime: '09:00 AM',
     finishTime: '5:00 PM',
