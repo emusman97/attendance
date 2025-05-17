@@ -58,6 +58,7 @@ import type { User, UserId } from '../../models';
 import { filterByKeys, makeFullName } from '../../utils';
 import { positions } from './data';
 import CloseIcon from '@mui/icons-material/Close';
+import { useNavigate } from 'react-router';
 
 export function UsersPage(): JSX.Element {
   const [allUsers, setAllUsers] = useState(() => UserMockService.getUsers());
@@ -78,6 +79,7 @@ export function UsersPage(): JSX.Element {
     data: filteredUsers,
     itemsPerPage: 5,
   });
+  const navigate = useNavigate();
 
   const anchorElRefs = useMemo(() => {
     const refsMap = new Map<UserId, RefObject<HTMLDivElement | null>>();
@@ -121,7 +123,9 @@ export function UsersPage(): JSX.Element {
   const handleClose: ClickAwayListenerProps['onClickAway'] = () => {
     setMenuOpenedId('');
   };
-  const handleViewUser = (userId: UserId) => () => {};
+  const handleViewUser = (userId: UserId) => () => {
+    navigate(userId);
+  };
   const handleEditUser = (userId: UserId) => () => {};
   const handleDeleteUser = (user: User) => () => {
     userToMutateRef.current = user;

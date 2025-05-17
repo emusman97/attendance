@@ -12,9 +12,12 @@ import { UserMockService } from '../../mockService';
 import { makeFullName } from '../../utils';
 import { routeConfig } from './config';
 import type { NavBreadcrumbsProps } from './types';
+import type { User } from '../../models';
+import { UserInfo } from '../UserInfo';
 
 export function NavBreadcrumbs({
   title,
+  CrumbsLeftContent,
   ...restProps
 }: NavBreadcrumbsProps): JSX.Element {
   const location = useLocation();
@@ -26,13 +29,14 @@ export function NavBreadcrumbs({
   );
 
   const crumbs = useMemo(() => {
-    const lastIndex = matchRoutes.length - 1;
+    const lastIndex = (matchedRoutes?.length ?? 0) - 1;
     return (
       matchedRoutes?.map(({ route }, index) => {
         const path = route.path;
         const icon = route.icon;
 
         let breadcrumb = '';
+        let userToShow: User | null = null;
 
         if (typeof route.breadcrumb === 'function') {
           const userId = params?.userId ?? '';
@@ -41,6 +45,7 @@ export function NavBreadcrumbs({
           const fullName = makeFullName(user?.fname ?? '', user?.lname ?? '');
 
           breadcrumb = fullName;
+          userToShow = user ?? {};
         } else {
           breadcrumb = route.breadcrumb ?? '';
         }
@@ -50,6 +55,7 @@ export function NavBreadcrumbs({
           path,
           icon,
           lastItem: index === lastIndex,
+          userToShow,
         };
       }) ?? []
     );
@@ -61,31 +67,46 @@ export function NavBreadcrumbs({
 
   return (
     <Stack mb={4} {...restProps}>
-      <Breadcrumbs separator={<ChevronRightIcon />}>
-        {crumbs.map((crumb, index) => {
-          const focused = crumbs.length === 1 || crumb.lastItem;
+      <Stack
+        flex={1}
+        flexDirection="row"
+        justifyContent="space-between"
+        alignItems="flex-start"
+      >
+        <Breadcrumbs separator={<ChevronRightIcon />}>
+          {crumbs.map((crumb, index) => {
+            const focused = crumb.lastItem;
 
-          const iconColor: SvgIconProps['color'] = focused
-            ? 'inherit'
-            : 'disabled';
-          const textColor: TypographyProps['color'] = focused
-            ? 'textPrimary'
-            : 'textDisabled';
+            const iconColor: SvgIconProps['color'] = focused
+              ? 'inherit'
+              : 'disabled';
+            const textColor: TypographyProps['color'] = focused
+              ? 'textPrimary'
+              : 'textDisabled';
 
-          return (
-            <Stack key={`${crumb.path}-${index}`} flexDirection="row" gap={1}>
-              {<crumb.icon color={iconColor} />}
-              <Typography variant="body1" color={textColor}>
-                {crumb.breadcrumb}
-              </Typography>
-            </Stack>
-          );
-        })}
-      </Breadcrumbs>
+            return (
+              <Stack key={`${crumb.path}-${index}`} flexDirection="row" gap={1}>
+                {<crumb.icon color={iconColor} />}
+                <Typography variant="body1" color={textColor}>
+                  {crumb.breadcrumb}
+                </Typography>
+              </Stack>
+            );
+          })}
+        </Breadcrumbs>
 
-      <Typography mt={2} variant="h4">
-        {title || crumbs?.[lastIndex]?.breadcrumb}
-      </Typography>
+        {CrumbsLeftContent}
+      </Stack>
+
+      {crumbs?.[lastIndex].userToShow ? (
+        <Stack pl={2} mt={4}>
+          <UserInfo user={crumbs[lastIndex].userToShow} showDesignation />
+        </Stack>
+      ) : (
+        <Typography mt={2} variant="h4">
+          {title || crumbs?.[lastIndex]?.breadcrumb}
+        </Typography>
+      )}
     </Stack>
   );
 }

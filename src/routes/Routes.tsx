@@ -7,6 +7,7 @@ import {
   DashboardPage,
   SettingsPage,
   SignInPage,
+  UserPage,
   UsersPage,
 } from '../pages';
 import { useUserRole, useUserState } from '../state';
@@ -56,6 +57,7 @@ export function MainRoutes(): JSX.Element {
           <Route index element={<AdminDashboardPage />} />
           <Route path={RouteNames.Users}>
             <Route index element={<UsersPage />} />
+            <Route path=":userId" element={<UserPage />} />
           </Route>
           <Route path={RouteNames.Settings} element={<SettingsPage />} />
         </Route>
