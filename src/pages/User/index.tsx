@@ -11,13 +11,17 @@ import {
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Stack from '@mui/material/Stack';
-import { useRef, useState, type JSX } from 'react';
+import { useCallback, useRef, useState, type JSX } from 'react';
 import { NavBreadcrumbs, PastAttendace } from '../../components';
 import { useParams } from 'react-router';
 import { UserMockService } from '../../mockService';
 import { AppStrings, AttrValues } from '../../constants';
-import type { AttendanceStatus } from '../../models';
-import { useBooleanState } from '../../hooks';
+import type { AttendanceStatus, User } from '../../models';
+import {
+  useBooleanState,
+  useDeleteUser,
+  useDeleteUserSnackbar,
+} from '../../hooks';
 
 export function UserPage(): JSX.Element {
   const params = useParams<{ userId: string }>();
@@ -30,6 +34,15 @@ export function UserPage(): JSX.Element {
     UserMockService.findAttendance(params.userId ?? '')
   );
   const [menuOpened, openMenu, closeMenu] = useBooleanState();
+
+  const { showDeleteUserSnackbar, renderSnackbar } = useDeleteUserSnackbar();
+  const { showDeleteUserDialog, renderDialog } = useDeleteUser({
+    onConfirmDeleteUser: useCallback((userToDelete: User) => {
+      UserMockService.deleteUser(userToDelete.id ?? '');
+      showDeleteUserSnackbar(userToDelete);
+      window.history.back();
+    }, []),
+  });
 
   const anchorElRef = useRef<HTMLDivElement>(null);
 
@@ -51,6 +64,9 @@ export function UserPage(): JSX.Element {
         setAttendace(UserMockService.filterAttendance(info?.id ?? '', status));
       }
     }
+  };
+  const handleDeleteUser = () => {
+    showDeleteUserDialog(info ?? {});
   };
 
   return (
@@ -88,7 +104,7 @@ export function UserPage(): JSX.Element {
                   >
                     <Paper>
                       <ClickAwayListener onClickAway={closeMenu}>
-                        <MenuList autoFocusItem>
+                        <MenuList autoFocusItem onClick={handleDeleteUser}>
                           <MenuItem>{AppStrings.Delete}</MenuItem>
                         </MenuList>
                       </ClickAwayListener>
@@ -112,6 +128,9 @@ export function UserPage(): JSX.Element {
           onFilterButtonClick={handleFilterButtonClick}
         />
       </Container>
+
+      {renderDialog()}
+      {renderSnackbar()}
     </Stack>
   );
 }

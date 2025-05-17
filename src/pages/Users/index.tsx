@@ -6,11 +6,6 @@ import {
   ButtonGroup,
   ClickAwayListener,
   Container,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
   Fab,
   FormControl,
   Grow,
@@ -22,14 +17,12 @@ import {
   Paper,
   Popper,
   Select,
-  Snackbar,
   Table,
   TableBody,
   TableCell,
   TableContainer,
   TableHead,
   TableRow,
-  Typography,
   type ClickAwayListenerProps,
   type PaginationProps,
   type SelectProps,
@@ -37,14 +30,14 @@ import {
 import Stack from '@mui/material/Stack';
 import {
   createRef,
-  Fragment,
+  useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
   type JSX,
   type RefObject,
 } from 'react';
+import { useNavigate } from 'react-router';
 import {
   InputField,
   NavBreadcrumbs,
@@ -52,13 +45,15 @@ import {
   type InputFieldProps,
 } from '../../components';
 import { AppStrings } from '../../constants';
-import { usePagination } from '../../hooks';
+import {
+  useDeleteUser,
+  useDeleteUserSnackbar,
+  usePagination,
+} from '../../hooks';
 import { UserMockService } from '../../mockService';
 import type { User, UserId } from '../../models';
-import { filterByKeys, makeFullName } from '../../utils';
+import { filterByKeys } from '../../utils';
 import { positions } from './data';
-import CloseIcon from '@mui/icons-material/Close';
-import { useNavigate } from 'react-router';
 
 export function UsersPage(): JSX.Element {
   const [allUsers, setAllUsers] = useState(() => UserMockService.getUsers());
@@ -68,8 +63,6 @@ export function UsersPage(): JSX.Element {
     positions()?.[0]?.value ?? ''
   );
   const [menuOpenedId, setMenuOpenedId] = useState<UserId>('');
-  const [deleteUserDialogOpened, setDeleteUserDialogOpened] = useState(false);
-  const [deleteUserSnackbarShown, setDeleteUserSnackbarShown] = useState(false);
 
   const filteredUsers = useMemo(
     () => filterByKeys(allUsers, ['fname', 'lname', 'designation'], query),
@@ -80,6 +73,14 @@ export function UsersPage(): JSX.Element {
     itemsPerPage: 5,
   });
   const navigate = useNavigate();
+  const { showDeleteUserSnackbar, renderSnackbar } = useDeleteUserSnackbar();
+  const { showDeleteUserDialog, renderDialog } = useDeleteUser({
+    onConfirmDeleteUser: useCallback((deletedUser: User) => {
+      UserMockService.deleteUser(deletedUser.id ?? '');
+      setAllUsers(UserMockService.getUsers());
+      showDeleteUserSnackbar(deletedUser);
+    }, []),
+  });
 
   const anchorElRefs = useMemo(() => {
     const refsMap = new Map<UserId, RefObject<HTMLDivElement | null>>();
@@ -90,7 +91,6 @@ export function UsersPage(): JSX.Element {
 
     return refsMap;
   }, [currentData]);
-  const userToMutateRef = useRef<User>(null);
 
   const handlePositionChange: SelectProps['onChange'] = (event) => {
     setSelectedPosition(`${event.target.value}`);
@@ -128,20 +128,7 @@ export function UsersPage(): JSX.Element {
   };
   const handleEditUser = (userId: UserId) => () => {};
   const handleDeleteUser = (user: User) => () => {
-    userToMutateRef.current = user;
-    setDeleteUserDialogOpened(true);
-  };
-  const handleCloseDeleteUserDialog = () => {
-    setDeleteUserDialogOpened(false);
-  };
-  const handleConfirmDeleteUser = () => {
-    UserMockService.deleteUser(userToMutateRef.current?.id ?? '');
-    setAllUsers(UserMockService.getUsers());
-    setDeleteUserDialogOpened(false);
-    setDeleteUserSnackbarShown(true);
-  };
-  const handleCloseDeleteSnackbar = () => {
-    setDeleteUserSnackbarShown(false);
+    showDeleteUserDialog(user);
   };
   const handlePageChange: PaginationProps['onChange'] = (_, page) => {
     goToPage(page);
@@ -292,60 +279,8 @@ export function UsersPage(): JSX.Element {
         <AddIcon sx={{ ml: 1 }} />
       </Fab>
 
-      <Dialog
-        open={deleteUserDialogOpened}
-        onClose={handleCloseDeleteUserDialog}
-      >
-        <DialogTitle>{AppStrings.DeleteUserTitle}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete the user{' '}
-            <Typography component="span" variant="body1" fontWeight="700">
-              {makeFullName(
-                userToMutateRef.current?.fname ?? '',
-                userToMutateRef.current?.lname ?? ''
-              )}
-            </Typography>
-            ? This action is irreversible.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteUserDialog}>
-            {AppStrings.Nevermind}
-          </Button>
-          <Button color="error" onClick={handleConfirmDeleteUser} autoFocus>
-            {AppStrings.DeleteUser}
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <Snackbar
-        open={deleteUserSnackbarShown}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-        autoHideDuration={6000}
-        onClose={handleCloseDeleteSnackbar}
-        message={
-          <Typography>
-            {AppStrings.DeletedUser}{' '}
-            <Typography component="span" fontWeight="bold">
-              {makeFullName(
-                userToMutateRef.current?.fname ?? '',
-                userToMutateRef.current?.lname ?? ''
-              )}
-            </Typography>
-          </Typography>
-        }
-        action={
-          <Fragment>
-            <Button onClick={handleCloseDeleteSnackbar}>
-              {AppStrings.Undo}
-            </Button>
-            <IconButton color="inherit" onClick={handleCloseDeleteSnackbar}>
-              <CloseIcon fontSize="small" />
-            </IconButton>
-          </Fragment>
-        }
-      />
+      {renderDialog()}
+      {renderSnackbar()}
     </Stack>
   );
 }
