@@ -86,6 +86,7 @@ function generateUser(index: number): User {
     lname: lastName,
     email,
     designation,
+    designationCode,
     role: 'user',
   };
 }

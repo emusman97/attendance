@@ -8,3 +8,5 @@ export const positions = (): SelectItems => [
     (des) => ({ title: des.title, value: des.code }) satisfies SelectItem
   ),
 ];
+
+export const NoneValue = positions()[0].value;

@@ -50,24 +50,37 @@ import {
   useDeleteUserSnackbar,
   usePagination,
 } from '../../hooks';
-import { UserMockService } from '../../mockService';
 import type { User, UserId } from '../../models';
+import { usersActions } from '../../state';
+import { useAppDispatch, useSelectAllUsers } from '../../state/hooks';
 import { filterByKeys } from '../../utils';
-import { positions } from './data';
+import { NoneValue, positions } from './data';
 
 export function UsersPage(): JSX.Element {
-  const [allUsers, setAllUsers] = useState(() => UserMockService.getUsers());
+  const dispatch = useAppDispatch();
+
+  const allUsers = useSelectAllUsers();
 
   const [query, setQuery] = useState('');
-  const [selectedPosition, setSelectedPosition] = useState(
-    positions()?.[0]?.value ?? ''
-  );
+  const [selectedPosition, setSelectedPosition] = useState(NoneValue);
+  const [appliedFilter, setAppliedFilter] = useState(NoneValue);
   const [menuOpenedId, setMenuOpenedId] = useState<UserId>('');
 
-  const filteredUsers = useMemo(
-    () => filterByKeys(allUsers, ['fname', 'lname', 'designation'], query),
-    [allUsers, query]
-  );
+  const filteredUsers = useMemo(() => {
+    const searchFilteredUsers = filterByKeys(
+      allUsers,
+      ['fname', 'lname', 'designation'],
+      query
+    );
+
+    if (appliedFilter !== NoneValue) {
+      return searchFilteredUsers.filter(
+        (user) => user.designationCode === appliedFilter
+      );
+    }
+
+    return searchFilteredUsers;
+  }, [allUsers, appliedFilter, query]);
   const { currentData, currentPage, totalPages, goToPage } = usePagination({
     data: filteredUsers,
     itemsPerPage: 5,
@@ -76,8 +89,7 @@ export function UsersPage(): JSX.Element {
   const { showDeleteUserSnackbar, renderSnackbar } = useDeleteUserSnackbar();
   const { showDeleteUserDialog, renderDialog } = useDeleteUser({
     onConfirmDeleteUser: useCallback((deletedUser: User) => {
-      UserMockService.deleteUser(deletedUser.id ?? '');
-      setAllUsers(UserMockService.getUsers());
+      dispatch(usersActions.deleteUser(deletedUser.id ?? ''));
       showDeleteUserSnackbar(deletedUser);
     }, []),
   });
@@ -99,22 +111,7 @@ export function UsersPage(): JSX.Element {
     setQuery(event?.currentTarget?.value ?? '');
   };
   const handleApplyFilter = () => {
-    const noneValue = positions()[0].value;
-
-    if (selectedPosition !== noneValue) {
-      const item = positions()
-        .slice(1)
-        .find((position) => position.value === selectedPosition);
-
-      setAllUsers(
-        UserMockService.getUsers().filter(
-          (user) => user.designation === item?.title
-        )
-      );
-    } else {
-      setAllUsers(UserMockService.getUsers());
-    }
-
+    setAppliedFilter(selectedPosition);
     goToPage(1);
   };
   const handleToggle = (userId: UserId) => () => {

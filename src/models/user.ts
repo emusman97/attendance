@@ -3,6 +3,7 @@ export interface User {
   fname?: string;
   lname?: string;
   designation?: string;
+  designationCode?: string;
   email?: string;
   pincode?: string;
   passwordChanged?: boolean;
@@ -10,6 +11,7 @@ export interface User {
 }
 
 export type UserId = NonNullable<User['id']>;
+export type UserIds = UserId[];
 
 export type Users = User[];
 

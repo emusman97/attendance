@@ -1,15 +1,4 @@
-import Container from '@mui/material/Container';
-import Stack from '@mui/material/Stack';
-import { useMemo, useState, type JSX } from 'react';
-import {
-  InputField,
-  NavBreadcrumbs,
-  UserInfo,
-  type InputFieldProps,
-} from '../../components';
-import { AppStrings } from '../../constants';
-import { UserMockService } from '../../mockService';
-import { StatusList } from './components';
+import GroupIcon from '@mui/icons-material/Group';
 import {
   Button,
   Pagination,
@@ -22,22 +11,40 @@ import {
   Typography,
   type PaginationProps,
 } from '@mui/material';
-import GroupIcon from '@mui/icons-material/Group';
-import { usePagination } from '../../hooks';
-import { filterByKeys } from '../../utils';
+import Container from '@mui/material/Container';
+import Stack from '@mui/material/Stack';
+import { useEffect, useMemo, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router';
+import {
+  InputField,
+  NavBreadcrumbs,
+  UserInfo,
+  type InputFieldProps,
+} from '../../components';
+import { AppStrings } from '../../constants';
+import { usePagination } from '../../hooks';
 import { RoutePaths } from '../../routes';
+import { useAppDispatch, usersActions, useSelectAllUsers } from '../../state';
+import { filterByKeys } from '../../utils';
+import { StatusList } from './components';
 
 export function AdminDashboardPage(): JSX.Element {
+  const dispatch = useAppDispatch();
+
+  const allUsers = useSelectAllUsers();
+
   const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
-  const [data] = useState(() => ({
-    present: UserMockService.getUsers().slice(0, 15),
-    absent: UserMockService.getUsers().slice(100, 115),
-    leave: UserMockService.getUsers().slice(150, 153),
-    all: UserMockService.getUsers().slice(2),
-  }));
+  const data = useMemo(
+    () => ({
+      present: allUsers.slice(0, 15),
+      absent: allUsers.slice(100, 115),
+      leave: allUsers.slice(150, 153),
+      all: allUsers.slice(2),
+    }),
+    [allUsers]
+  );
   const usersData = useMemo(
     () => filterByKeys(data.all, ['fname', 'lname'], query),
     [data.all, query]
@@ -56,6 +63,10 @@ export function AdminDashboardPage(): JSX.Element {
   const gotoUsersPage = () => {
     navigate(RoutePaths.Users);
   };
+
+  useEffect(() => {
+    dispatch(usersActions.fetchAllUsers());
+  }, [dispatch]);
 
   return (
     <Stack flex={1}>

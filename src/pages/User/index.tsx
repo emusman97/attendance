@@ -11,36 +11,47 @@ import {
 } from '@mui/material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Stack from '@mui/material/Stack';
-import { useCallback, useRef, useState, type JSX } from 'react';
+import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import { NavBreadcrumbs, PastAttendace } from '../../components';
 import { useParams } from 'react-router';
 import { UserMockService } from '../../mockService';
-import { AppStrings, AttrValues } from '../../constants';
+import {
+  AppStrings,
+  AttrValues,
+  DeleteUserSnackbarHideTimeout,
+} from '../../constants';
 import type { AttendanceStatus, User } from '../../models';
 import {
   useBooleanState,
   useDeleteUser,
   useDeleteUserSnackbar,
 } from '../../hooks';
+import { useAppDispatch, usersActions, useSelectUserById } from '../../state';
+import { useDispatch } from 'react-redux';
 
 export function UserPage(): JSX.Element {
-  const params = useParams<{ userId: string }>();
+  const dispatch = useAppDispatch();
 
-  const [info] = useState(() =>
-    UserMockService.findUserById(params.userId ?? '')
-  );
+  const params = useParams<{ userId: string }>();
+  const userId = params.userId ?? '';
+
+  const info = useSelectUserById(userId);
 
   const [attendance, setAttendace] = useState(() =>
     UserMockService.findAttendance(params.userId ?? '')
   );
   const [menuOpened, openMenu, closeMenu] = useBooleanState();
 
+  const timerRef = useRef<NodeJS.Timeout>(null);
+
+  const goBack = () => window.history.back();
+
   const { showDeleteUserSnackbar, renderSnackbar } = useDeleteUserSnackbar();
   const { showDeleteUserDialog, renderDialog } = useDeleteUser({
     onConfirmDeleteUser: useCallback((userToDelete: User) => {
-      UserMockService.deleteUser(userToDelete.id ?? '');
-      showDeleteUserSnackbar(userToDelete);
-      window.history.back();
+      dispatch(usersActions.deleteUser(userToDelete.id ?? ''));
+      showDeleteUserSnackbar(userToDelete, goBack);
+      timerRef.current = setTimeout(goBack, DeleteUserSnackbarHideTimeout);
     }, []),
   });
 
@@ -68,6 +79,8 @@ export function UserPage(): JSX.Element {
   const handleDeleteUser = () => {
     showDeleteUserDialog(info ?? {});
   };
+
+  useEffect(() => () => clearTimeout(timerRef.current ?? -1), []);
 
   return (
     <Stack flex={1}>
