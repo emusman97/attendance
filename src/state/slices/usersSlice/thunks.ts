@@ -12,7 +12,7 @@ export const fetchAllUsers = createAsyncThunk<Users>(
 export const addUser = createAsyncThunk(
   UsersActionTypes.addUser,
   (newUser: User) => {
-    UserMockService.addUser(newUser);
+    UserMockService.addUser({ ...newUser });
 
     return newUser;
   }

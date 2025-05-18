@@ -1,6 +1,9 @@
 import { addHours, isWithinInterval, parse } from 'date-fns';
 import { UserMockService } from '../mockService';
 
+export const EmailRegex =
+  /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
 export const delay = (duration = 600) =>
   new Promise<void>((resolve) => {
     setTimeout(resolve, duration);
@@ -61,3 +64,5 @@ export const filterByKeys = <T extends object>(
     return filterBy.includes(lowerCaseSearchTerm);
   });
 };
+
+export const isEmailValid = (email: string) => EmailRegex.test(email);

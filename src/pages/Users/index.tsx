@@ -42,10 +42,12 @@ import {
   InputField,
   NavBreadcrumbs,
   UserInfo,
+  type AddEditUserFormType,
   type InputFieldProps,
 } from '../../components';
 import { AppStrings } from '../../constants';
 import {
+  useAddEditUser,
   useDeleteUser,
   useDeleteUserSnackbar,
   usePagination,
@@ -65,6 +67,21 @@ export function UsersPage(): JSX.Element {
   const [selectedPosition, setSelectedPosition] = useState(NoneValue);
   const [appliedFilter, setAppliedFilter] = useState(NoneValue);
   const [menuOpenedId, setMenuOpenedId] = useState<UserId>('');
+  const { showAddEditUserDialog, renderDialog: renderAddEditDialog } =
+    useAddEditUser({
+      onSubmit: useCallback((type: AddEditUserFormType, user: User) => {
+        if (type === 'add') {
+          dispatch(usersActions.addUser(user));
+        } else {
+          dispatch(
+            usersActions.editUser({
+              userId: user.id ?? '',
+              updatedUserInfo: user,
+            })
+          );
+        }
+      }, []),
+    });
 
   const filteredUsers = useMemo(() => {
     const searchFilteredUsers = filterByKeys(
@@ -123,7 +140,12 @@ export function UsersPage(): JSX.Element {
   const handleViewUser = (userId: UserId) => () => {
     navigate(userId);
   };
-  const handleEditUser = (userId: UserId) => () => {};
+  const handleAddUser = () => {
+    showAddEditUserDialog('add');
+  };
+  const handleEditUser = (user: User) => () => {
+    showAddEditUserDialog('edit', user);
+  };
   const handleDeleteUser = (user: User) => () => {
     showDeleteUserDialog(user);
   };
@@ -234,9 +256,7 @@ export function UsersPage(): JSX.Element {
                               <Paper>
                                 <ClickAwayListener onClickAway={handleClose}>
                                   <MenuList autoFocusItem>
-                                    <MenuItem
-                                      onClick={handleEditUser(row.id ?? '')}
-                                    >
+                                    <MenuItem onClick={handleEditUser(row)}>
                                       {AppStrings.Edit}
                                     </MenuItem>
                                     <MenuItem onClick={handleDeleteUser(row)}>
@@ -271,6 +291,7 @@ export function UsersPage(): JSX.Element {
         sx={{ alignSelf: 'flex-end', right: 25 }}
         variant="extended"
         color="primary"
+        onClick={handleAddUser}
       >
         {AppStrings.AddUser}
         <AddIcon sx={{ ml: 1 }} />
@@ -278,6 +299,7 @@ export function UsersPage(): JSX.Element {
 
       {renderDialog()}
       {renderSnackbar()}
+      {renderAddEditDialog()}
     </Stack>
   );
 }

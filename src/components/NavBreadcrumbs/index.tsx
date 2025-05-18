@@ -8,12 +8,12 @@ import {
 } from '@mui/material';
 import { useMemo, type JSX } from 'react';
 import { matchRoutes, useLocation, useParams } from 'react-router';
-import { UserMockService } from '../../mockService';
+import type { User } from '../../models';
+import { useSelectUserById } from '../../state';
 import { makeFullName } from '../../utils';
+import { UserInfo } from '../UserInfo';
 import { routeConfig } from './config';
 import type { NavBreadcrumbsProps } from './types';
-import type { User } from '../../models';
-import { UserInfo } from '../UserInfo';
 
 export function NavBreadcrumbs({
   title,
@@ -22,6 +22,8 @@ export function NavBreadcrumbs({
 }: NavBreadcrumbsProps): JSX.Element {
   const location = useLocation();
   const params = useParams<{ userId: string }>();
+
+  const user = useSelectUserById(params.userId ?? '');
 
   const matchedRoutes = useMemo(
     () => matchRoutes(routeConfig(), location.pathname),
@@ -39,9 +41,6 @@ export function NavBreadcrumbs({
         let userToShow: User | null = null;
 
         if (typeof route.breadcrumb === 'function') {
-          const userId = params?.userId ?? '';
-
-          const user = UserMockService.findUserById(userId);
           const fullName = makeFullName(user?.fname ?? '', user?.lname ?? '');
 
           breadcrumb = fullName;
@@ -59,7 +58,7 @@ export function NavBreadcrumbs({
         };
       }) ?? []
     );
-  }, [matchedRoutes, params?.userId]);
+  }, [matchedRoutes, user]);
   const lastIndex = useMemo(
     () => Math.max(0, crumbs.length - 1),
     [crumbs.length]

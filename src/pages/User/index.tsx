@@ -1,3 +1,4 @@
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import {
   Button,
   ButtonGroup,
@@ -9,30 +10,45 @@ import {
   Paper,
   Popper,
 } from '@mui/material';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Stack from '@mui/material/Stack';
 import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
-import { NavBreadcrumbs, PastAttendace } from '../../components';
 import { useParams } from 'react-router';
-import { UserMockService } from '../../mockService';
+import {
+  NavBreadcrumbs,
+  PastAttendace,
+  type AddEditUserFormType,
+} from '../../components';
 import {
   AppStrings,
   AttrValues,
   DeleteUserSnackbarHideTimeout,
 } from '../../constants';
-import type { AttendanceStatus, User } from '../../models';
 import {
+  useAddEditUser,
   useBooleanState,
   useDeleteUser,
   useDeleteUserSnackbar,
 } from '../../hooks';
+import { UserMockService } from '../../mockService';
+import type { AttendanceStatus, User } from '../../models';
 import { useAppDispatch, usersActions, useSelectUserById } from '../../state';
-import { useDispatch } from 'react-redux';
 
 export function UserPage(): JSX.Element {
   const dispatch = useAppDispatch();
 
   const params = useParams<{ userId: string }>();
+  const { showAddEditUserDialog, renderDialog } = useAddEditUser({
+    onSubmit: useCallback((type: AddEditUserFormType, user: User) => {
+      if (type === 'edit') {
+        dispatch(
+          usersActions.editUser({
+            userId: user?.id ?? '',
+            updatedUserInfo: user,
+          })
+        );
+      }
+    }, []),
+  });
   const userId = params.userId ?? '';
 
   const info = useSelectUserById(userId);
@@ -47,13 +63,14 @@ export function UserPage(): JSX.Element {
   const goBack = () => window.history.back();
 
   const { showDeleteUserSnackbar, renderSnackbar } = useDeleteUserSnackbar();
-  const { showDeleteUserDialog, renderDialog } = useDeleteUser({
-    onConfirmDeleteUser: useCallback((userToDelete: User) => {
-      dispatch(usersActions.deleteUser(userToDelete.id ?? ''));
-      showDeleteUserSnackbar(userToDelete, goBack);
-      timerRef.current = setTimeout(goBack, DeleteUserSnackbarHideTimeout);
-    }, []),
-  });
+  const { showDeleteUserDialog, renderDialog: renderDeleteUserDialog } =
+    useDeleteUser({
+      onConfirmDeleteUser: useCallback((userToDelete: User) => {
+        dispatch(usersActions.deleteUser(userToDelete.id ?? ''));
+        showDeleteUserSnackbar(userToDelete, goBack);
+        timerRef.current = setTimeout(goBack, DeleteUserSnackbarHideTimeout);
+      }, []),
+    });
 
   const anchorElRef = useRef<HTMLDivElement>(null);
 
@@ -76,6 +93,9 @@ export function UserPage(): JSX.Element {
       }
     }
   };
+  const handleEditUser = () => {
+    showAddEditUserDialog('edit', info);
+  };
   const handleDeleteUser = () => {
     showDeleteUserDialog(info ?? {});
   };
@@ -94,7 +114,7 @@ export function UserPage(): JSX.Element {
                 size="medium"
                 variant="outlined"
               >
-                <Button>{AppStrings.Edit}</Button>
+                <Button onClick={handleEditUser}>{AppStrings.Edit}</Button>
                 <Button size="small" onClick={openMenu}>
                   <ArrowDropDownIcon />
                 </Button>
@@ -143,6 +163,7 @@ export function UserPage(): JSX.Element {
       </Container>
 
       {renderDialog()}
+      {renderDeleteUserDialog()}
       {renderSnackbar()}
     </Stack>
   );
