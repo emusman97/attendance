@@ -52,11 +52,9 @@ export function ChangePasswordPage(): JSX.Element {
     setShowPasswordButtonShown(false);
   };
 
-  console.log(loading, success, error);
-
   useEffect(() => {
     if (success) {
-      navigate(RoutePaths.Dashboard, { replace: true });
+      navigate(`/${RoutePaths.Dashboard}`, { replace: true });
       dispatch(userActions.clearSuccess());
     }
   }, [dispatch, navigate, success]);

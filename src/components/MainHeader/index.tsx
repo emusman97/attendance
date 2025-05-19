@@ -4,11 +4,13 @@ import {
   IconButton,
   Menu,
   MenuItem,
+  Stack,
   Toolbar,
   Tooltip,
   Typography,
   type IconButtonProps,
 } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import { useNavigate } from 'react-router';
 import { useState, type JSX } from 'react';
 import { AppStrings } from '../../constants';
@@ -17,9 +19,11 @@ import { useAppDispatch, userActions } from '../../state';
 import { RoutePaths } from '../../routes';
 
 export function MainHeader({
-  showSettingsIcon,
+  showSettingsIcon = false,
+  showOpenDrawerIcon = false,
   initials,
   onLogoutClick,
+  onOpenDrawerClick,
 }: MainHeaderProps): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -46,7 +50,20 @@ export function MainHeader({
   return (
     <AppBar position="relative">
       <Toolbar sx={{ justifyContent: 'space-between' }}>
-        <Typography variant="h6">{AppStrings.AppName}</Typography>
+        <Stack direction="row" alignItems="center">
+          {showOpenDrawerIcon && (
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              sx={{ mr: 2 }}
+              onClick={onOpenDrawerClick}
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
+          <Typography variant="h6">{AppStrings.AppName}</Typography>
+        </Stack>
 
         {showSettingsIcon && (
           <>
