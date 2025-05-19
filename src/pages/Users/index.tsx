@@ -28,15 +28,7 @@ import {
   type SelectProps,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import {
-  createRef,
-  useCallback,
-  useEffect,
-  useMemo,
-  useState,
-  type JSX,
-  type RefObject,
-} from 'react';
+import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router';
 import {
   InputField,
@@ -67,6 +59,7 @@ export function UsersPage(): JSX.Element {
   const [selectedPosition, setSelectedPosition] = useState(NoneValue);
   const [appliedFilter, setAppliedFilter] = useState(NoneValue);
   const [menuOpenedId, setMenuOpenedId] = useState<UserId>('');
+  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const { showAddEditUserDialog, renderDialog: renderAddEditDialog } =
     useAddEditUser({
       onSubmit: useCallback((type: AddEditUserFormType, user: User) => {
@@ -111,15 +104,7 @@ export function UsersPage(): JSX.Element {
     }, []),
   });
 
-  const anchorElRefs = useMemo(() => {
-    const refsMap = new Map<UserId, RefObject<HTMLDivElement | null>>();
-
-    currentData.forEach((user) => {
-      refsMap.set(user.id ?? '', createRef());
-    });
-
-    return refsMap;
-  }, [currentData]);
+  const createButtonGroupId = (userId: UserId) => `btn-group-${userId}`;
 
   const handlePositionChange: SelectProps['onChange'] = (event) => {
     setSelectedPosition(`${event.target.value}`);
@@ -131,10 +116,19 @@ export function UsersPage(): JSX.Element {
     setAppliedFilter(selectedPosition);
     goToPage(1);
   };
+  const handleSetAnchorEl = (userId: UserId) => {
+    const el = document.getElementById(createButtonGroupId(userId));
+
+    if (el) {
+      setAnchorEl(el);
+    }
+  };
   const handleToggle = (userId: UserId) => () => {
+    handleSetAnchorEl(userId);
     setMenuOpenedId(userId);
   };
   const handleClose: ClickAwayListenerProps['onClickAway'] = () => {
+    setAnchorEl(undefined);
     setMenuOpenedId('');
   };
   const handleViewUser = (userId: UserId) => () => {
@@ -152,13 +146,6 @@ export function UsersPage(): JSX.Element {
   const handlePageChange: PaginationProps['onChange'] = (_, page) => {
     goToPage(page);
   };
-
-  useEffect(
-    () => () => {
-      anchorElRefs.clear();
-    },
-    [anchorElRefs]
-  );
 
   return (
     <Stack flex={1}>
@@ -220,8 +207,7 @@ export function UsersPage(): JSX.Element {
                       <TableCell>8.0</TableCell>
                       <TableCell>
                         <ButtonGroup
-                          ref={anchorElRefs.get(row.id ?? '')}
-                          id="btn-group"
+                          id={createButtonGroupId(row.id ?? '')}
                           size="medium"
                           variant="outlined"
                         >
@@ -238,7 +224,7 @@ export function UsersPage(): JSX.Element {
                         <Popper
                           sx={{ zIndex: 1 }}
                           open={menuOpenedId === row.id}
-                          anchorEl={anchorElRefs.get(row.id ?? '')?.current}
+                          anchorEl={anchorEl}
                           role={undefined}
                           transition
                           disablePortal
