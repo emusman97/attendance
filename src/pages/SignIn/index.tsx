@@ -23,12 +23,7 @@ export function SignInPage(): JSX.Element {
     register,
     handleSubmit,
     setError,
-  } = useForm<SignInFormInput>({
-    defaultValues: {
-      username: 'super',
-      pincode: '9999',
-    },
-  });
+  } = useForm<SignInFormInput>({});
   const [passwordShown, setPasswordShown] = useState(false);
   const [showPasswordButtonShown, setShowPasswordButtonShown] = useState(false);
   const dispatch = useAppDispatch();
