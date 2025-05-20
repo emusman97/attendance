@@ -30,7 +30,7 @@ export function SearchFilter({
       alignItems="center"
       {...restProps}
     >
-      <Stack flex={1}>
+      <Stack flex={1} flexDirection="row" alignItems="center">
         <InputField
           sx={{ width: '30%' }}
           label={AppStrings.Search}

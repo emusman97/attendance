@@ -1,16 +1,12 @@
-import FilterListIcon from '@mui/icons-material/FilterList';
 import { Stack } from '@mui/material';
-import Box from '@mui/material/Box';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { useMemo, useState, type JSX } from 'react';
 import { AppStrings } from '../../constants';
-import { InputField, type InputFieldProps } from '../InputField';
-import { Select, type SelectProps } from '../Select';
+import { AttendanceChip } from '../AttendaceChip';
+import { SearchFilter } from '../SearchFilter';
 import { Table } from '../Table';
 import { AttributeItems } from './data';
 import type { PastAttendaceProps } from './types';
-import { AttendanceChip } from '../AttendaceChip';
 
 export function PastAttendace({
   containerProps,
@@ -34,15 +30,14 @@ export function PastAttendace({
     );
   }, [attendance, query]);
 
-  const handleAttrValueChange: SelectProps['onValueChange'] = (newValue) => {
+  const handleAttrValueChange = (newValue: string) => {
     setAtrrValue(newValue);
     onSelectedAttrChange?.(newValue);
   };
   const handleFilterButtonClick = () => {
     onFilterButtonClick?.(attrValue);
   };
-  const handleSearchTextChange: InputFieldProps['onChange'] = (event) => {
-    const value = event.currentTarget.value;
+  const handleSearchTextChange = (value: string) => {
     setQuery(value);
     onSearchQueryChange?.(value);
   };
@@ -53,27 +48,18 @@ export function PastAttendace({
         {AppStrings.PastAttendance}
       </Typography>
 
-      <Box pl="1rem" pr="1rem" sx={{ display: 'flex', flexDirection: 'row' }}>
-        <InputField
-          sx={{ minWidth: '30%' }}
-          label={AppStrings.Search}
-          placeholder={AppStrings.SearchPlaceholder}
-          variant="outlined"
-          value={query}
-          onChange={handleSearchTextChange}
-        />
-        <Select
-          sx={{ ml: '1rem', mr: '1rem', minWidth: '15%' }}
-          label={AppStrings.Attribute}
-          value={attrValue}
-          onValueChange={handleAttrValueChange}
-          options={AttributeItems}
-        />
-
-        <IconButton onClick={handleFilterButtonClick}>
-          <FilterListIcon />
-        </IconButton>
-      </Box>
+      <SearchFilter
+        pl="1rem"
+        pr="1rem"
+        query={query}
+        onQueryChange={handleSearchTextChange}
+        showSelect
+        selectionOptions={AttributeItems}
+        selectedSelectionValue={attrValue}
+        onSelectionValueChange={handleAttrValueChange}
+        showFilterButton
+        onFilterButtonClick={handleFilterButtonClick}
+      />
 
       <Table
         tableContainerProps={{ sx: { mt: '2rem', maxHeight: '30vh' } }}
