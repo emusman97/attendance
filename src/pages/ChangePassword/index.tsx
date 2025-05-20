@@ -25,9 +25,9 @@ export function ChangePasswordPage(): JSX.Element {
 
   const getHelperText = () => {
     if (errors.pincode?.type === 'required') {
-      return AppStrings.PinCodeNotEmpty;
+      return AppStrings.pinCodeNotEmpty;
     } else if (errors.pincode?.type === 'pattern') {
-      return AppStrings.PinCodePatternError;
+      return AppStrings.pinCodePatternError;
     }
 
     return '';
@@ -54,7 +54,7 @@ export function ChangePasswordPage(): JSX.Element {
 
   useEffect(() => {
     if (success) {
-      navigate(`/${RoutePaths.Dashboard}`, { replace: true });
+      navigate(`/${RoutePaths.dashboard}`, { replace: true });
       dispatch(userActions.clearSuccess());
     }
   }, [dispatch, navigate, success]);
@@ -63,7 +63,7 @@ export function ChangePasswordPage(): JSX.Element {
     <AuthLayout>
       <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
         <Typography className={styles.headingText} variant="h5">
-          {AppStrings.ChangePassword}
+          {AppStrings.changePassword}
         </Typography>
 
         {!!error && (
@@ -74,12 +74,12 @@ export function ChangePasswordPage(): JSX.Element {
 
         <PasswordField
           containerProps={{ sx: { mt: 2, mb: 2 } }}
-          label={AppStrings.PinCode}
+          label={AppStrings.pinCode}
           helperText={getHelperText()}
           inputProps={{
             disabled: loading,
             error: !!errors.pincode,
-            placeholder: AppStrings.PinCode,
+            placeholder: AppStrings.pinCode,
             slotProps: { input: { maxLength: 4 } },
             ...register('pincode', {
               required: true,
@@ -99,7 +99,7 @@ export function ChangePasswordPage(): JSX.Element {
           disabled={loading}
           type="submit"
           sx={{ mt: 2 }}
-          text={AppStrings.Confirm}
+          text={AppStrings.confirm}
         />
       </form>
     </AuthLayout>

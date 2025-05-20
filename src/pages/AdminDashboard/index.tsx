@@ -1,28 +1,17 @@
 import GroupIcon from '@mui/icons-material/Group';
-import {
-  Button,
-  Pagination,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  type PaginationProps,
-} from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
 import { useEffect, useMemo, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router';
 import {
-  InputField,
   NavBreadcrumbs,
+  SearchFilter,
+  Table,
   UserInfo,
-  type InputFieldProps,
+  type SearchFilterProps,
 } from '../../components';
 import { AppStrings } from '../../constants';
-import { usePagination } from '../../hooks';
 import { RoutePaths } from '../../routes';
 import { useAppDispatch, usersActions, useSelectAllUsers } from '../../state';
 import { filterByKeys } from '../../utils';
@@ -45,23 +34,23 @@ export function AdminDashboardPage(): JSX.Element {
     }),
     [allUsers]
   );
-  const usersData = useMemo(
-    () => filterByKeys(data.all, ['fname', 'lname'], query),
+  const tableData = useMemo(
+    () =>
+      filterByKeys(data.all, ['fname', 'lname'], query).map((user) => ({
+        user,
+        totalHours: 160,
+        averageHours: 8.0,
+      })),
     [data.all, query]
   );
-  const { currentData, currentPage, totalPages, goToPage } = usePagination({
-    data: usersData,
-    itemsPerPage: 5,
-  });
 
-  const handleSearchTextChange: InputFieldProps['onChange'] = (event) => {
-    setQuery(event?.currentTarget?.value ?? '');
-  };
-  const handlePageChange: PaginationProps['onChange'] = (_, page) => {
-    goToPage(page);
+  const handleSearchTextChange: SearchFilterProps['onQueryChange'] = (
+    value
+  ) => {
+    setQuery(value);
   };
   const gotoUsersPage = () => {
-    navigate(RoutePaths.Users);
+    navigate(RoutePaths.users);
   };
 
   useEffect(() => {
@@ -71,7 +60,7 @@ export function AdminDashboardPage(): JSX.Element {
   return (
     <Stack flex={1}>
       <Container sx={{}}>
-        <NavBreadcrumbs title={AppStrings.TodaysAvailability} />
+        <NavBreadcrumbs title={AppStrings.todaysAvailability} />
 
         <Stack
           flex={1}
@@ -82,79 +71,55 @@ export function AdminDashboardPage(): JSX.Element {
         >
           <StatusList
             sx={{ flex: 1 }}
-            status={AppStrings.Present}
+            status={AppStrings.present}
             users={data.present}
           />
           <StatusList
             sx={{ flex: 1 }}
-            status={AppStrings.Absent}
+            status={AppStrings.absent}
             users={data.absent}
           />
           <StatusList
             sx={{ flex: 1 }}
-            status={AppStrings.Leave}
+            status={AppStrings.leave}
             users={data.leave}
           />
         </Stack>
 
         <Stack flex={1} gap={4}>
-          <Typography variant="h5">{AppStrings.OverallStats}</Typography>
+          <Typography variant="h5">{AppStrings.overallStats}</Typography>
 
           <Stack gap={2}>
-            <Stack
-              flexDirection="row"
-              justifyContent="space-between"
-              alignItems="center"
-            >
-              <InputField
-                sx={{ minWidth: '30%' }}
-                variant="outlined"
-                label={AppStrings.Search}
-                placeholder={AppStrings.Search}
-                value={query}
-                onChange={handleSearchTextChange}
-              />
+            <SearchFilter
+              query={query}
+              onQueryChange={handleSearchTextChange}
+              RightComponent={
+                <Button
+                  variant="contained"
+                  startIcon={<GroupIcon />}
+                  onClick={gotoUsersPage}
+                >
+                  {AppStrings.manageUsers}
+                </Button>
+              }
+            />
 
-              <Button
-                variant="contained"
-                startIcon={<GroupIcon />}
-                onClick={gotoUsersPage}
-              >
-                {AppStrings.ManageUsers}
-              </Button>
-            </Stack>
-
-            <TableContainer sx={{ height: 450 }}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>{AppStrings.Name}</TableCell>
-                    <TableCell>{AppStrings.TotalHours}</TableCell>
-                    <TableCell>{AppStrings.DailyAverageHours}</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {currentData.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>
-                        <UserInfo user={row} showDesignation={false} />
-                      </TableCell>
-                      <TableCell>160</TableCell>
-                      <TableCell>8.0</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <Pagination
-              sx={{ mt: '1rem', alignSelf: 'center' }}
-              color="primary"
-              count={totalPages}
-              showFirstButton
-              showLastButton
-              page={currentPage}
-              onChange={handlePageChange}
+            <Table
+              gap={2}
+              tableContainerProps={{ sx: { height: 450 } }}
+              data={tableData}
+              columns={[
+                {
+                  id: 'user',
+                  label: AppStrings.name,
+                  formatValue(_, row) {
+                    return <UserInfo user={row.user} showDesignation={false} />;
+                  },
+                },
+                { id: 'totalHours', label: AppStrings.totalHours },
+                { id: 'averageHours', label: AppStrings.dailyAverageHours },
+              ]}
+              pagination={{ hasPagination: true }}
             />
           </Stack>
         </Stack>

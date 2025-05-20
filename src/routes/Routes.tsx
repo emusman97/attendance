@@ -22,44 +22,44 @@ export function MainRoutes(): JSX.Element {
     <Routes>
       <Route index element={<SignInPage />} />
       <Route
-        path={RouteNames.ChangePassword}
+        path={RouteNames.changePassword}
         element={
           <ProtectedRoute
             isAllowed={isAuthenticated && userRole === 'user'}
-            redirectPath={RouteNames.Root}
+            redirectPath={RouteNames.root}
           >
             <ChangePasswordPage />
           </ProtectedRoute>
         }
       />
       <Route
-        path={RouteNames.Dashboard}
+        path={RouteNames.dashboard}
         element={
           <ProtectedRoute
             isAllowed={isAuthenticated && userRole === 'user'}
-            redirectPath={RouteNames.Root}
+            redirectPath={RouteNames.root}
           >
             <DashboardPage />
           </ProtectedRoute>
         }
       />
       <Route
-        path={`${RouteNames.AdminRoot}/*`}
+        path={`${RouteNames.adminRoot}/*`}
         element={
           <ProtectedRoute
             isAllowed={isAuthenticated && userRole === 'admin'}
-            redirectPath={RouteNames.Root}
+            redirectPath={RouteNames.root}
           />
         }
       >
-        <Route index element={<Navigate to={RouteNames.Dashboard} replace />} />
-        <Route path={RouteNames.Dashboard} element={<AdminLayout />}>
+        <Route index element={<Navigate to={RouteNames.dashboard} replace />} />
+        <Route path={RouteNames.dashboard} element={<AdminLayout />}>
           <Route index element={<AdminDashboardPage />} />
-          <Route path={RouteNames.Users}>
+          <Route path={RouteNames.users}>
             <Route index element={<UsersPage />} />
             <Route path=":userId" element={<UserPage />} />
           </Route>
-          <Route path={RouteNames.Settings} element={<SettingsPage />} />
+          <Route path={RouteNames.settings} element={<SettingsPage />} />
         </Route>
       </Route>
     </Routes>

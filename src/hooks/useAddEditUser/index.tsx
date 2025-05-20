@@ -6,10 +6,13 @@ import {
 import type { User } from '../../models';
 import { useBooleanState } from '../useBooleanState';
 import type { UseAddEditUser, UseAddEditUserParams } from './types';
+import { useAppDispatch, usersActions } from '../../state';
 
 export function useAddEditUser({
   onSubmit,
 }: UseAddEditUserParams): UseAddEditUser {
+  const dispatch = useAppDispatch();
+
   const [formDialogOpened, openFormDialog, closeFormDialog] = useBooleanState();
 
   const callbackRefs = useRef({ onSubmit });
@@ -26,6 +29,14 @@ export function useAddEditUser({
   };
 
   const handleOnSubmit = (user: User) => {
+    if (formType.current === 'edit') {
+      dispatch(
+        usersActions.editUser({
+          userId: user?.id ?? '',
+          updatedUserInfo: user,
+        })
+      );
+    }
     callbackRefs.current?.onSubmit?.(formType.current ?? 'add', user);
   };
 

@@ -11,18 +11,18 @@ import { RoutePaths } from '../../../routes';
  */
 export const getDrawerList = () => [
   {
-    title: AppStrings.Dashboard,
+    title: AppStrings.dashboard,
     icon: <HomeIcon />,
-    path: RoutePaths.AdminDashboard,
+    path: RoutePaths.adminDashboard,
   },
   {
-    title: AppStrings.Users,
+    title: AppStrings.users,
     icon: <GroupIcon />,
-    path: RoutePaths.AdminUsers,
+    path: RoutePaths.adminUsers,
   },
   {
-    title: AppStrings.Settings,
+    title: AppStrings.settings,
     icon: <SettingsIcon />,
-    path: RoutePaths.AdminSettings,
+    path: RoutePaths.adminSettings,
   },
 ];
