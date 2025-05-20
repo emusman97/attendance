@@ -3,7 +3,7 @@ import type { User } from '../../models';
 import type { AddEditUserFormType } from '../../components';
 
 export interface UseAddEditUserParams {
-  onSubmit: (type: AddEditUserFormType, user: User) => void;
+  onSubmit?: (type: AddEditUserFormType, user: User) => void;
 }
 
 export interface UseAddEditUser {

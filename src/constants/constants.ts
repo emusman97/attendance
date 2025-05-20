@@ -9,7 +9,7 @@ export const AttrValues = {
 
 export const OfficeHoursTimeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/;
 
-export const DeleteUserSnackbarHideTimeout = 6000;
+export const DELETE_USER_SNACKBAR_HIDE_TIMEOUT = 6000;
 
 export const DefaultPinCode: NonNullable<User['pincode']> = '0000';
 

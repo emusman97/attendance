@@ -2,7 +2,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { Button, IconButton, Snackbar, Typography } from '@mui/material';
 import { useRef } from 'react';
 import { Fragment } from 'react/jsx-runtime';
-import { AppStrings, DeleteUserSnackbarHideTimeout } from '../../constants';
+import { AppStrings, DELETE_USER_SNACKBAR_HIDE_TIMEOUT } from '../../constants';
 import type { User } from '../../models';
 import { makeFullName } from '../../utils';
 import { useBooleanState } from '../useBooleanState';
@@ -36,7 +36,7 @@ export function useDeleteUserSnackbar(): UseDeleteUserSnackbar {
     <Snackbar
       open={deleteUserSnackbarShown}
       anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-      autoHideDuration={DeleteUserSnackbarHideTimeout}
+      autoHideDuration={DELETE_USER_SNACKBAR_HIDE_TIMEOUT}
       onClose={closeDeleteUserSnackbar}
       message={
         <Typography>

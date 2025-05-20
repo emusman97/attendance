@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import { Container } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import { useCallback, useMemo, useState, type JSX } from 'react';
+import { useMemo, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router';
 import {
   FAB,
@@ -10,43 +10,22 @@ import {
   SearchFilter,
   Table,
   UserInfo,
-  type AddEditUserFormType,
 } from '../../components';
 import { AppStrings } from '../../constants';
-import {
-  useAddEditUser,
-  useDeleteUser,
-  useDeleteUserSnackbar,
-} from '../../hooks';
+import { useAddEditUser, useDeleteUser } from '../../hooks';
 import type { User, UserId, Users } from '../../models';
-import { usersActions } from '../../state';
-import { useAppDispatch, useSelectAllUsers } from '../../state/hooks';
+import { useSelectAllUsers } from '../../state/hooks';
 import { filterByKeys } from '../../utils';
 import { NoneValue, positions } from './data';
 
 export function UsersPage(): JSX.Element {
-  const dispatch = useAppDispatch();
-
   const allUsers = useSelectAllUsers();
 
   const [query, setQuery] = useState('');
   const [selectedPosition, setSelectedPosition] = useState(NoneValue);
   const [appliedFilter, setAppliedFilter] = useState(NoneValue);
   const { showAddEditUserDialog, renderDialog: renderAddEditDialog } =
-    useAddEditUser({
-      onSubmit: useCallback((type: AddEditUserFormType, user: User) => {
-        if (type === 'add') {
-          dispatch(usersActions.addUser(user));
-        } else {
-          dispatch(
-            usersActions.editUser({
-              userId: user.id ?? '',
-              updatedUserInfo: user,
-            })
-          );
-        }
-      }, []),
-    });
+    useAddEditUser({});
 
   const tableData = useMemo(() => {
     let searchFilteredUsers: Users = [];
@@ -72,13 +51,7 @@ export function UsersPage(): JSX.Element {
     }));
   }, [allUsers, appliedFilter, query]);
   const navigate = useNavigate();
-  const { showDeleteUserSnackbar, renderSnackbar } = useDeleteUserSnackbar();
-  const { showDeleteUserDialog, renderDialog } = useDeleteUser({
-    onConfirmDeleteUser: useCallback((deletedUser: User) => {
-      dispatch(usersActions.deleteUser(deletedUser.id ?? ''));
-      showDeleteUserSnackbar(deletedUser);
-    }, []),
-  });
+  const { showDeleteUserDialog, renderDialog } = useDeleteUser({});
 
   const handlePositionChange = (newValue: string) => {
     setSelectedPosition(newValue);
@@ -179,7 +152,6 @@ export function UsersPage(): JSX.Element {
       />
 
       {renderDialog()}
-      {renderSnackbar()}
       {renderAddEditDialog()}
     </Stack>
   );
