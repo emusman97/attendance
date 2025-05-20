@@ -11,3 +11,4 @@ export * from './AddEditUserFormDialog';
 export * from './FAB';
 export * from './Alert';
 export * from './Select';
+export * from './Table';
