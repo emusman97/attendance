@@ -1,22 +1,11 @@
 import AddIcon from '@mui/icons-material/Add';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import {
-  Button,
-  ButtonGroup,
-  ClickAwayListener,
-  Container,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-  type ClickAwayListenerProps,
-} from '@mui/material';
+import { Container } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router';
 import {
   FAB,
+  MenuButton,
   NavBreadcrumbs,
   SearchFilter,
   Table,
@@ -43,8 +32,6 @@ export function UsersPage(): JSX.Element {
   const [query, setQuery] = useState('');
   const [selectedPosition, setSelectedPosition] = useState(NoneValue);
   const [appliedFilter, setAppliedFilter] = useState(NoneValue);
-  const [menuOpenedId, setMenuOpenedId] = useState<UserId>('');
-  const [anchorEl, setAnchorEl] = useState<HTMLElement>();
   const { showAddEditUserDialog, renderDialog: renderAddEditDialog } =
     useAddEditUser({
       onSubmit: useCallback((type: AddEditUserFormType, user: User) => {
@@ -93,8 +80,6 @@ export function UsersPage(): JSX.Element {
     }, []),
   });
 
-  const createButtonGroupId = (userId: UserId) => `btn-group-${userId}`;
-
   const handlePositionChange = (newValue: string) => {
     setSelectedPosition(newValue);
   };
@@ -103,21 +88,6 @@ export function UsersPage(): JSX.Element {
   };
   const handleApplyFilter = () => {
     setAppliedFilter(selectedPosition);
-  };
-  const handleSetAnchorEl = (userId: UserId) => {
-    const el = document.getElementById(createButtonGroupId(userId));
-
-    if (el) {
-      setAnchorEl(el);
-    }
-  };
-  const handleToggle = (userId: UserId) => () => {
-    handleSetAnchorEl(userId);
-    setMenuOpenedId(userId);
-  };
-  const handleClose: ClickAwayListenerProps['onClickAway'] = () => {
-    setAnchorEl(undefined);
-    setMenuOpenedId('');
   };
   const handleViewUser = (userId: UserId) => () => {
     navigate(userId);
@@ -173,56 +143,22 @@ export function UsersPage(): JSX.Element {
                     const user = value as User;
 
                     return (
-                      <>
-                        <ButtonGroup
-                          id={createButtonGroupId(user.id ?? '')}
-                          size="medium"
-                          variant="outlined"
-                        >
-                          <Button onClick={handleViewUser(user.id ?? '')}>
-                            {AppStrings.View}
-                          </Button>
-                          <Button
-                            size="small"
-                            onClick={handleToggle(user.id ?? '')}
-                          >
-                            <ArrowDropDownIcon />
-                          </Button>
-                        </ButtonGroup>
-                        <Popper
-                          sx={{ zIndex: 1 }}
-                          open={menuOpenedId === user.id}
-                          anchorEl={anchorEl}
-                          role={undefined}
-                          transition
-                          disablePortal
-                        >
-                          {({ TransitionProps, placement }) => (
-                            <Grow
-                              {...TransitionProps}
-                              style={{
-                                transformOrigin:
-                                  placement === 'bottom'
-                                    ? 'center top'
-                                    : 'center bottom',
-                              }}
-                            >
-                              <Paper>
-                                <ClickAwayListener onClickAway={handleClose}>
-                                  <MenuList autoFocusItem>
-                                    <MenuItem onClick={handleEditUser(user)}>
-                                      {AppStrings.Edit}
-                                    </MenuItem>
-                                    <MenuItem onClick={handleDeleteUser(user)}>
-                                      {AppStrings.Delete}
-                                    </MenuItem>
-                                  </MenuList>
-                                </ClickAwayListener>
-                              </Paper>
-                            </Grow>
-                          )}
-                        </Popper>
-                      </>
+                      <MenuButton
+                        mainTitle={AppStrings.View}
+                        onClick={handleViewUser(user.id ?? '')}
+                        menuItems={[
+                          {
+                            id: '1',
+                            title: AppStrings.Edit,
+                            onClick: handleEditUser(user),
+                          },
+                          {
+                            id: '2',
+                            title: AppStrings.Delete,
+                            onClick: handleDeleteUser(user),
+                          },
+                        ]}
+                      />
                     );
                   },
                 },
