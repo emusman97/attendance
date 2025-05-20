@@ -1,6 +1,5 @@
 import AddIcon from '@mui/icons-material/Add';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import FilterListIcon from '@mui/icons-material/FilterList';
 import {
   Button,
   ButtonGroup,
@@ -8,7 +7,6 @@ import {
   Container,
   Fab,
   Grow,
-  IconButton,
   MenuItem,
   MenuList,
   Pagination,
@@ -27,13 +25,10 @@ import Stack from '@mui/material/Stack';
 import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router';
 import {
-  InputField,
   NavBreadcrumbs,
-  Select,
+  SearchFilter,
   UserInfo,
   type AddEditUserFormType,
-  type InputFieldProps,
-  type SelectProps,
 } from '../../components';
 import { AppStrings } from '../../constants';
 import {
@@ -104,11 +99,11 @@ export function UsersPage(): JSX.Element {
 
   const createButtonGroupId = (userId: UserId) => `btn-group-${userId}`;
 
-  const handlePositionChange: SelectProps['onValueChange'] = (newValue) => {
+  const handlePositionChange = (newValue: string) => {
     setSelectedPosition(newValue);
   };
-  const handleSearchTextChange: InputFieldProps['onChange'] = (event) => {
-    setQuery(event?.currentTarget?.value ?? '');
+  const handleSearchTextChange = (value: string) => {
+    setQuery(value);
   };
   const handleApplyFilter = () => {
     setAppliedFilter(selectedPosition);
@@ -151,27 +146,16 @@ export function UsersPage(): JSX.Element {
         <NavBreadcrumbs />
 
         <Stack flex={1} sx={{ pl: 5, pr: 5 }}>
-          <Stack flexDirection="row" alignItems="center" gap={2}>
-            <InputField
-              sx={{ minWidth: '30%' }}
-              variant="outlined"
-              label={AppStrings.Search}
-              placeholder={AppStrings.SearchUserLabel}
-              value={query}
-              onChange={handleSearchTextChange}
-            />
-
-            <Select
-              sx={{ minWidth: '15%' }}
-              label={AppStrings.Position}
-              value={selectedPosition}
-              onValueChange={handlePositionChange}
-              options={positions()}
-            />
-            <IconButton onClick={handleApplyFilter}>
-              <FilterListIcon />
-            </IconButton>
-          </Stack>
+          <SearchFilter
+            query={query}
+            onQueryChange={handleSearchTextChange}
+            showSelect
+            selectedSelectionValue={selectedPosition}
+            onSelectionValueChange={handlePositionChange}
+            selectionOptions={positions()}
+            showFilterButton
+            onFilterButtonClick={handleApplyFilter}
+          />
 
           <Stack flex={1}>
             <TableContainer sx={{ height: 450 }}>
