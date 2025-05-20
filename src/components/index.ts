@@ -10,3 +10,4 @@ export * from './UserInfo';
 export * from './AddEditUserFormDialog';
 export * from './FAB';
 export * from './Alert';
+export * from './Select';

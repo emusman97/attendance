@@ -1,12 +1,8 @@
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { Stack } from '@mui/material';
 import Box from '@mui/material/Box';
-import FormControl from '@mui/material/FormControl';
 import IconButton from '@mui/material/IconButton';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
 import Pagination, { type PaginationProps } from '@mui/material/Pagination';
-import Select, { type SelectProps } from '@mui/material/Select';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -22,6 +18,7 @@ import { InputField, type InputFieldProps } from '../InputField';
 import { ItemsPerPage } from './constants';
 import { AttributeItems } from './data';
 import type { PastAttendaceProps } from './types';
+import { Select, type SelectProps } from '../Select';
 
 export function PastAttendace({
   containerProps,
@@ -50,10 +47,9 @@ export function PastAttendace({
     itemsPerPage: ItemsPerPage,
   });
 
-  const handleAttrValueChange: SelectProps['onChange'] = (event) => {
-    const attrValue = event.target.value as string;
-    setAtrrValue(attrValue);
-    onSelectedAttrChange?.(attrValue);
+  const handleAttrValueChange: SelectProps['onValueChange'] = (newValue) => {
+    setAtrrValue(newValue);
+    onSelectedAttrChange?.(newValue);
   };
   const handleFilterButtonClick = () => {
     onFilterButtonClick?.(attrValue);
@@ -82,21 +78,13 @@ export function PastAttendace({
           value={query}
           onChange={handleSearchTextChange}
         />
-        <FormControl sx={{ ml: '1rem', mr: '1rem', minWidth: '15%' }}>
-          <InputLabel>{AppStrings.Attribute}</InputLabel>
-          <Select
-            autoWidth
-            label={AppStrings.Attribute}
-            value={attrValue}
-            onChange={handleAttrValueChange}
-          >
-            {AttributeItems.map((item) => (
-              <MenuItem key={item.value} value={item.value}>
-                {item.title}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Select
+          sx={{ ml: '1rem', mr: '1rem', minWidth: '15%' }}
+          label={AppStrings.Attribute}
+          value={attrValue}
+          onValueChange={handleAttrValueChange}
+          options={AttributeItems}
+        />
 
         <IconButton onClick={handleFilterButtonClick}>
           <FilterListIcon />

@@ -7,16 +7,13 @@ import {
   ClickAwayListener,
   Container,
   Fab,
-  FormControl,
   Grow,
   IconButton,
-  InputLabel,
   MenuItem,
   MenuList,
   Pagination,
   Paper,
   Popper,
-  Select,
   Table,
   TableBody,
   TableCell,
@@ -25,7 +22,6 @@ import {
   TableRow,
   type ClickAwayListenerProps,
   type PaginationProps,
-  type SelectProps,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useCallback, useMemo, useState, type JSX } from 'react';
@@ -33,9 +29,11 @@ import { useNavigate } from 'react-router';
 import {
   InputField,
   NavBreadcrumbs,
+  Select,
   UserInfo,
   type AddEditUserFormType,
   type InputFieldProps,
+  type SelectProps,
 } from '../../components';
 import { AppStrings } from '../../constants';
 import {
@@ -106,8 +104,8 @@ export function UsersPage(): JSX.Element {
 
   const createButtonGroupId = (userId: UserId) => `btn-group-${userId}`;
 
-  const handlePositionChange: SelectProps['onChange'] = (event) => {
-    setSelectedPosition(`${event.target.value}`);
+  const handlePositionChange: SelectProps['onValueChange'] = (newValue) => {
+    setSelectedPosition(newValue);
   };
   const handleSearchTextChange: InputFieldProps['onChange'] = (event) => {
     setQuery(event?.currentTarget?.value ?? '');
@@ -162,21 +160,14 @@ export function UsersPage(): JSX.Element {
               value={query}
               onChange={handleSearchTextChange}
             />
-            <FormControl sx={{ minWidth: '15%' }}>
-              <InputLabel>{AppStrings.Position}</InputLabel>
-              <Select
-                autoWidth
-                label={AppStrings.Position}
-                value={selectedPosition}
-                onChange={handlePositionChange}
-              >
-                {positions().map((item) => (
-                  <MenuItem key={item.value} value={item.value}>
-                    {item.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
+
+            <Select
+              sx={{ minWidth: '15%' }}
+              label={AppStrings.Position}
+              value={selectedPosition}
+              onValueChange={handlePositionChange}
+              options={positions()}
+            />
             <IconButton onClick={handleApplyFilter}>
               <FilterListIcon />
             </IconButton>
