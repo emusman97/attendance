@@ -1,5 +1,5 @@
 export interface FormFields {
-  startTime: string;
-  finishTime: string;
+  startTime: Date;
+  finishTime: Date;
   workingHours: string;
 }

@@ -14,3 +14,5 @@ export const DELETE_USER_SNACKBAR_HIDE_TIMEOUT = 6000;
 export const DefaultPinCode: NonNullable<User['pincode']> = '0000';
 
 export const DEFAULT_ITEMS_PER_PAGE = 5;
+
+export const TIME_FORMAT = 'hh:mm aa';
