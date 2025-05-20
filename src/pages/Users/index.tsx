@@ -25,6 +25,7 @@ import Stack from '@mui/material/Stack';
 import { useCallback, useMemo, useState, type JSX } from 'react';
 import { useNavigate } from 'react-router';
 import {
+  FAB,
   NavBreadcrumbs,
   SearchFilter,
   UserInfo,
@@ -248,15 +249,13 @@ export function UsersPage(): JSX.Element {
           </Stack>
         </Stack>
       </Container>
-      <Fab
+
+      <FAB
         sx={{ alignSelf: 'flex-end', right: 25 }}
-        variant="extended"
-        color="primary"
+        title={AppStrings.AddUser}
         onClick={handleAddUser}
-      >
-        {AppStrings.AddUser}
-        <AddIcon sx={{ ml: 1 }} />
-      </Fab>
+        RightIcon={<AddIcon sx={{ ml: 1 }} />}
+      />
 
       {renderDialog()}
       {renderSnackbar()}
