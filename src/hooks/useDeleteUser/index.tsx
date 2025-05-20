@@ -58,7 +58,7 @@ export function useDeleteUser({
   const renderDialog = () => (
     <>
       <Dialog open={deleteUserDialogOpened} onClose={closeDeleteUserDialog}>
-        <DialogTitle>{AppStrings.DeleteUserTitle}</DialogTitle>
+        <DialogTitle>{AppStrings.deleteUserTitle}</DialogTitle>
         <DialogContent>
           <DialogContentText>
             Are you sure you want to delete the user{' '}
@@ -73,10 +73,10 @@ export function useDeleteUser({
         </DialogContent>
         <DialogActions>
           <Button onClick={closeDeleteUserDialog}>
-            {AppStrings.Nevermind}
+            {AppStrings.nevermind}
           </Button>
           <Button color="error" onClick={handleConfirmDeleteUser} autoFocus>
-            {AppStrings.DeleteUser}
+            {AppStrings.deleteUser}
           </Button>
         </DialogActions>
       </Dialog>

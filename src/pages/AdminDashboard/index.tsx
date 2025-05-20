@@ -60,7 +60,7 @@ export function AdminDashboardPage(): JSX.Element {
   return (
     <Stack flex={1}>
       <Container sx={{}}>
-        <NavBreadcrumbs title={AppStrings.TodaysAvailability} />
+        <NavBreadcrumbs title={AppStrings.todaysAvailability} />
 
         <Stack
           flex={1}
@@ -71,23 +71,23 @@ export function AdminDashboardPage(): JSX.Element {
         >
           <StatusList
             sx={{ flex: 1 }}
-            status={AppStrings.Present}
+            status={AppStrings.present}
             users={data.present}
           />
           <StatusList
             sx={{ flex: 1 }}
-            status={AppStrings.Absent}
+            status={AppStrings.absent}
             users={data.absent}
           />
           <StatusList
             sx={{ flex: 1 }}
-            status={AppStrings.Leave}
+            status={AppStrings.leave}
             users={data.leave}
           />
         </Stack>
 
         <Stack flex={1} gap={4}>
-          <Typography variant="h5">{AppStrings.OverallStats}</Typography>
+          <Typography variant="h5">{AppStrings.overallStats}</Typography>
 
           <Stack gap={2}>
             <SearchFilter
@@ -99,7 +99,7 @@ export function AdminDashboardPage(): JSX.Element {
                   startIcon={<GroupIcon />}
                   onClick={gotoUsersPage}
                 >
-                  {AppStrings.ManageUsers}
+                  {AppStrings.manageUsers}
                 </Button>
               }
             />
@@ -111,13 +111,13 @@ export function AdminDashboardPage(): JSX.Element {
               columns={[
                 {
                   id: 'user',
-                  label: AppStrings.Name,
+                  label: AppStrings.name,
                   formatValue(_, row) {
                     return <UserInfo user={row.user} showDesignation={false} />;
                   },
                 },
-                { id: 'totalHours', label: AppStrings.TotalHours },
-                { id: 'averageHours', label: AppStrings.DailyAverageHours },
+                { id: 'totalHours', label: AppStrings.totalHours },
+                { id: 'averageHours', label: AppStrings.dailyAverageHours },
               ]}
               pagination={{ hasPagination: true }}
             />

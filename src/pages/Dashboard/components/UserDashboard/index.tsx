@@ -54,9 +54,9 @@ export function UserDashboard(): JSX.Element {
       >
         <Alert
           severity="info"
-          action={<Button variant="text">{AppStrings.PunchAttendance}</Button>}
-          title={AppStrings.WelcomBackUser(info?.fname ?? '')}
-          description={AppStrings.ReadyPunchAttendance}
+          action={<Button variant="text">{AppStrings.punchAttendance}</Button>}
+          title={AppStrings.welcomBackUser(info?.fname ?? '')}
+          description={AppStrings.readyPunchAttendance}
         />
 
         <PastAttendace
@@ -77,7 +77,7 @@ export function UserDashboard(): JSX.Element {
         <Box sx={{ flex: 1, alignSelf: 'flex-end' }}>
           <FAB
             sx={{ bottom: '1rem', right: '2rem' }}
-            title={AppStrings.ApplyForLeave}
+            title={AppStrings.applyForLeave}
             RightIcon={<AddIcon />}
           />
         </Box>

@@ -5,9 +5,9 @@ import type { AttendanceStatus } from '../../models';
 import type { AttendanceChipProps } from './types';
 
 const AttendanceLableMap: Record<AttendanceStatus, string> = {
-  present: AppStrings.Present,
-  absent: AppStrings.Absent,
-  leave: AppStrings.Leave,
+  present: AppStrings.present,
+  absent: AppStrings.absent,
+  leave: AppStrings.leave,
 };
 const AttendanceColorMap: Record<AttendanceStatus, ChipProps['color']> = {
   present: 'default',

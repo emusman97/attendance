@@ -62,12 +62,12 @@ export function MainHeader({
               <MenuIcon />
             </IconButton>
           )}
-          <Typography variant="h6">{AppStrings.AppName}</Typography>
+          <Typography variant="h6">{AppStrings.appName}</Typography>
         </Stack>
 
         {showSettingsIcon && (
           <>
-            <Tooltip title={AppStrings.OpenSettings}>
+            <Tooltip title={AppStrings.openSettings}>
               <IconButton sx={{ p: 0 }} onClick={handleOpenSettingsMenu}>
                 <Avatar>{initials}</Avatar>
               </IconButton>
@@ -90,7 +90,7 @@ export function MainHeader({
             >
               <MenuItem onClick={handleLogout}>
                 <Typography sx={{ textAlign: 'center' }}>
-                  {AppStrings.Logout}
+                  {AppStrings.logout}
                 </Typography>
               </MenuItem>
             </Menu>

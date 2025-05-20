@@ -99,17 +99,17 @@ export function UsersPage(): JSX.Element {
               columns={[
                 {
                   id: 'user',
-                  label: AppStrings.Name,
+                  label: AppStrings.name,
                   formatValue(value) {
                     return (
                       <UserInfo user={value as User} showDesignation={false} />
                     );
                   },
                 },
-                { id: 'position', label: AppStrings.Position },
-                { id: 'email', label: AppStrings.Email },
-                { id: 'totalHours', label: AppStrings.TotalHours },
-                { id: 'averageHours', label: AppStrings.DailyAverageHours },
+                { id: 'position', label: AppStrings.position },
+                { id: 'email', label: AppStrings.email },
+                { id: 'totalHours', label: AppStrings.totalHours },
+                { id: 'averageHours', label: AppStrings.dailyAverageHours },
                 {
                   id: 'user',
                   formatValue(value) {
@@ -117,17 +117,17 @@ export function UsersPage(): JSX.Element {
 
                     return (
                       <MenuButton
-                        mainTitle={AppStrings.View}
+                        mainTitle={AppStrings.view}
                         onClick={handleViewUser(user.id ?? '')}
                         menuItems={[
                           {
                             id: '1',
-                            title: AppStrings.Edit,
+                            title: AppStrings.edit,
                             onClick: handleEditUser(user),
                           },
                           {
                             id: '2',
-                            title: AppStrings.Delete,
+                            title: AppStrings.delete,
                             onClick: handleDeleteUser(user),
                           },
                         ]}
@@ -146,7 +146,7 @@ export function UsersPage(): JSX.Element {
 
       <FAB
         sx={{ alignSelf: 'flex-end', right: 25 }}
-        title={AppStrings.AddUser}
+        title={AppStrings.addUser}
         onClick={handleAddUser}
         RightIcon={<AddIcon sx={{ ml: 1 }} />}
       />

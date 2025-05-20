@@ -61,25 +61,25 @@ export function SettingsPage(): JSX.Element {
       if (errors.startTime?.type === 'validate') {
         return errors.startTime.message;
       } else if (errors.startTime?.type === 'required') {
-        return AppStrings.StartTimeEmpty;
+        return AppStrings.startTimeEmpty;
       } else if (errors.startTime?.type === 'pattern') {
-        return AppStrings.StartTimePatternError;
+        return AppStrings.startTimePatternError;
       }
     } else if (forField === errors.finishTime) {
       if (errors.finishTime?.type === 'validate') {
         return errors.finishTime.message;
       } else if (errors.finishTime?.type === 'required') {
-        return AppStrings.FinishTimeEmpty;
+        return AppStrings.finishTimeEmpty;
       } else if (errors.finishTime?.type === 'pattern') {
-        return AppStrings.FinishTimePatternError;
+        return AppStrings.finishTimePatternError;
       }
     } else {
       if (errors.workingHours?.type === 'validate') {
         return errors.workingHours.message;
       } else if (errors.workingHours?.type === 'required') {
-        return AppStrings.WorkingHoursEmpty;
+        return AppStrings.workingHoursEmpty;
       } else {
-        return AppStrings.InvalidWorkingHours;
+        return AppStrings.invalidWorkingHours;
       }
     }
 
@@ -96,13 +96,13 @@ export function SettingsPage(): JSX.Element {
     if (startTime >= endTime) {
       setError('startTime', {
         type: 'validate',
-        message: AppStrings.InvalidStartTime,
+        message: AppStrings.invalidStartTime,
       });
       return;
     } else if (endTime <= startTime) {
       setError('finishTime', {
         type: 'validate',
-        message: AppStrings.InvalidFinishTime,
+        message: AppStrings.invalidFinishTime,
       });
       return;
     }
@@ -110,7 +110,7 @@ export function SettingsPage(): JSX.Element {
     if (differenceInHours(endTime, startTime) !== hours) {
       setError('workingHours', {
         type: 'validate',
-        message: AppStrings.InconsistenWorkingHours,
+        message: AppStrings.inconsistenWorkingHours,
       });
       return;
     }
@@ -137,7 +137,7 @@ export function SettingsPage(): JSX.Element {
 
           <Stack alignItems="flex-start">
             <Typography variant="h5" fontWeight={400}>
-              {AppStrings.OfficeHours}
+              {AppStrings.officeHours}
             </Typography>
 
             <form onSubmit={handleSubmit(onSubmit)}>
@@ -147,7 +147,7 @@ export function SettingsPage(): JSX.Element {
                   control={control}
                   render={({ field, fieldState: { error } }) => (
                     <TimeField
-                      label={AppStrings.StartTime}
+                      label={AppStrings.startTime}
                       format={TIME_FORMAT}
                       error={!!error}
                       helperText={getHelperText(error)}
@@ -162,7 +162,7 @@ export function SettingsPage(): JSX.Element {
                   control={control}
                   render={({ field, fieldState: { error } }) => (
                     <TimeField
-                      label={AppStrings.FinishTime}
+                      label={AppStrings.finishTime}
                       format={TIME_FORMAT}
                       error={!!error}
                       helperText={getHelperText(error)}
@@ -174,8 +174,8 @@ export function SettingsPage(): JSX.Element {
 
                 <InputField
                   variant="standard"
-                  placeholder={AppStrings.WorkingHourse}
-                  label={AppStrings.WorkingHourse}
+                  placeholder={AppStrings.workingHours}
+                  label={AppStrings.workingHours}
                   type="number"
                   error={!!errors.workingHours}
                   helperText={getHelperText(errors.workingHours)}
@@ -194,7 +194,7 @@ export function SettingsPage(): JSX.Element {
         <FAB
           sx={{ alignSelf: 'flex-end', right: 25 }}
           onClick={handleSaveChanges}
-          title={AppStrings.SaveChanges}
+          title={AppStrings.saveChanges}
           RightIcon={<DoneIcon sx={{ ml: 1 }} />}
         />
 
@@ -205,7 +205,7 @@ export function SettingsPage(): JSX.Element {
           open={successSnackbarShown}
           onClose={handleSnackbarClose}
         >
-          {AppStrings.OfficeHoursUpdated}
+          {AppStrings.officeHoursUpdated}
         </Snackbar>
       </Stack>
     </LocalizationProvider>

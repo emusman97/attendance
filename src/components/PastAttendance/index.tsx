@@ -45,7 +45,7 @@ export function PastAttendace({
   return (
     <Stack {...containerProps}>
       <Typography mb={'2rem'} variant="h5">
-        {AppStrings.PastAttendance}
+        {AppStrings.pastAttendance}
       </Typography>
 
       <SearchFilter
@@ -65,7 +65,7 @@ export function PastAttendace({
         tableContainerProps={{ sx: { mt: '2rem', maxHeight: '30vh' } }}
         data={filteredAttendance}
         columns={[
-          { id: 'date', label: AppStrings.Date },
+          { id: 'date', label: AppStrings.date },
           {
             id: 'status',
             formatValue(_, row) {

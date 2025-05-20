@@ -55,12 +55,12 @@ export function UserPage(): JSX.Element {
         <NavBreadcrumbs
           CrumbsLeftContent={
             <MenuButton
-              mainTitle={AppStrings.Edit}
+              mainTitle={AppStrings.edit}
               onClick={handleEditUser}
               menuItems={[
                 {
                   id: '1',
-                  title: AppStrings.Delete,
+                  title: AppStrings.delete,
                   onClick: handleDeleteUser,
                 },
               ]}

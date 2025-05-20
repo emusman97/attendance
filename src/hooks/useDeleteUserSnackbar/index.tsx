@@ -40,7 +40,7 @@ export function useDeleteUserSnackbar(): UseDeleteUserSnackbar {
       onClose={closeDeleteUserSnackbar}
       message={
         <Typography>
-          {AppStrings.DeletedUser}{' '}
+          {AppStrings.deletedUser}{' '}
           <Typography component="span" fontWeight="bold">
             {makeFullName(
               deletedUserRef.current?.fname ?? '',
@@ -51,7 +51,7 @@ export function useDeleteUserSnackbar(): UseDeleteUserSnackbar {
       }
       action={
         <Fragment>
-          <Button onClick={handleClose}>{AppStrings.Undo}</Button>
+          <Button onClick={handleClose}>{AppStrings.undo}</Button>
           <IconButton color="inherit" onClick={handleClose}>
             <CloseIcon fontSize="small" />
           </IconButton>
