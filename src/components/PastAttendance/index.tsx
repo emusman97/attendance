@@ -77,7 +77,6 @@ export function PastAttendace({
 
       <Table
         sx={{ mt: '2rem', maxHeight: '30vh' }}
-        tableComponentProps={{ stickyHeader: true }}
         data={filteredAttendance}
         columns={[
           { id: 'date', label: AppStrings.Date },

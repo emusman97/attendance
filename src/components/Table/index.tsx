@@ -34,7 +34,7 @@ export function Table<T extends AnyData>({
   return (
     <Stack {...restProps}>
       <TableContainer>
-        <MUITable {...tableComponentProps}>
+        <MUITable stickyHeader {...tableComponentProps}>
           <TableHead>
             <TableRow>
               {columns.map((column) => (
