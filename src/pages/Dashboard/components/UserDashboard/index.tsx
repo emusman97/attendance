@@ -1,14 +1,13 @@
 import AddIcon from '@mui/icons-material/Add';
-import { Alert, Box, Button, Container, Fab, Typography } from '@mui/material';
+import { Box, Button, Container } from '@mui/material';
 import { useState, type JSX } from 'react';
-import { MainHeader, PastAttendace } from '../../../../components';
+import { Alert, FAB, MainHeader, PastAttendace } from '../../../../components';
 import { AppStrings, AttrValues } from '../../../../constants';
 import { UserMockService } from '../../../../mockService';
+import type { AttendanceStatus } from '../../../../models';
 import { useUserState } from '../../../../state';
-import { Theme } from '../../../../styles';
 import { canShowApplyLeaveButton, getInitials } from '../../../../utils';
 import styles from './styles.module.css';
-import type { AttendanceStatus } from '../../../../models';
 
 export function UserDashboard(): JSX.Element {
   const { info } = useUserState();
@@ -56,18 +55,9 @@ export function UserDashboard(): JSX.Element {
         <Alert
           severity="info"
           action={<Button variant="text">{AppStrings.PunchAttendance}</Button>}
-        >
-          <Box>
-            <Typography
-              sx={{ fontWeight: '500', color: Theme.colors.InfoAlert }}
-            >
-              {AppStrings.WelcomBackUser(info?.fname ?? '')}
-            </Typography>
-            <Typography sx={{ color: Theme.colors.InfoAlert }}>
-              {AppStrings.ReadyPunchAttendance}
-            </Typography>
-          </Box>
-        </Alert>
+          title={AppStrings.WelcomBackUser(info?.fname ?? '')}
+          description={AppStrings.ReadyPunchAttendance}
+        />
 
         <PastAttendace
           attendance={attendance}
@@ -85,14 +75,11 @@ export function UserDashboard(): JSX.Element {
 
       {canShowApplyLeaveButton() && (
         <Box sx={{ flex: 1, alignSelf: 'flex-end' }}>
-          <Fab
+          <FAB
             sx={{ bottom: '1rem', right: '2rem' }}
-            variant="extended"
-            color="primary"
-          >
-            {AppStrings.ApplyForLeave}
-            <AddIcon />
-          </Fab>
+            title={AppStrings.ApplyForLeave}
+            RightIcon={<AddIcon />}
+          />
         </Box>
       )}
     </div>

@@ -8,3 +8,5 @@ export * from './PastAttendance';
 export * from './NavBreadcrumbs';
 export * from './UserInfo';
 export * from './AddEditUserFormDialog';
+export * from './FAB';
+export * from './Alert';
