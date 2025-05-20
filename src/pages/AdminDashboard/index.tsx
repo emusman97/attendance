@@ -50,7 +50,7 @@ export function AdminDashboardPage(): JSX.Element {
     setQuery(value);
   };
   const gotoUsersPage = () => {
-    navigate(RoutePaths.Users);
+    navigate(RoutePaths.users);
   };
 
   useEffect(() => {

@@ -42,7 +42,7 @@ export function MainHeader({
     handleCloseSettingsMenu();
 
     dispatch(userActions.logout());
-    navigate(RoutePaths.Root, { replace: true });
+    navigate(RoutePaths.root, { replace: true });
 
     onLogoutClick?.();
   };

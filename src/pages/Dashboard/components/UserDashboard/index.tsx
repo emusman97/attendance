@@ -17,16 +17,16 @@ export function UserDashboard(): JSX.Element {
   );
 
   const handleFilterButtonClick = (filterValue: string) => {
-    if (filterValue === AttrValues.Status) {
+    if (filterValue === AttrValues.status) {
       setAttendace(UserMockService.findAttendance(info?.id ?? ''));
     } else {
       let status: AttendanceStatus | null = null;
 
-      if (filterValue === AttrValues.Present) {
+      if (filterValue === AttrValues.present) {
         status = 'present';
-      } else if (filterValue === AttrValues.Absent) {
+      } else if (filterValue === AttrValues.absent) {
         status = 'absent';
-      } else if (filterValue === AttrValues.Leave) {
+      } else if (filterValue === AttrValues.leave) {
         status = 'leave';
       }
 

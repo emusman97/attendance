@@ -75,11 +75,11 @@ export function SignInPage(): JSX.Element {
   useEffect(() => {
     if (info) {
       if (info.role === 'admin') {
-        navigate(RoutePaths.AdminRoot, { replace: true });
+        navigate(RoutePaths.adminRoot, { replace: true });
       } else if (firstLogin) {
-        navigate(RoutePaths.ChangePassword, { replace: true });
+        navigate(RoutePaths.changePassword, { replace: true });
       } else {
-        navigate(RoutePaths.Dashboard, { replace: true });
+        navigate(RoutePaths.dashboard, { replace: true });
       }
       dispatch(userActions.clearSuccess());
     }

@@ -54,7 +54,7 @@ export function ChangePasswordPage(): JSX.Element {
 
   useEffect(() => {
     if (success) {
-      navigate(`/${RoutePaths.Dashboard}`, { replace: true });
+      navigate(`/${RoutePaths.dashboard}`, { replace: true });
       dispatch(userActions.clearSuccess());
     }
   }, [dispatch, navigate, success]);

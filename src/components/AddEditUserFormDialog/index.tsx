@@ -8,7 +8,7 @@ import {
   Stack,
 } from '@mui/material';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { AppStrings, DefaultPinCode } from '../../constants';
+import { AppStrings, DEFAULT_PIN_CODE } from '../../constants';
 import type { User } from '../../models';
 import { InputField } from '../InputField';
 import type { AddEditUserFormDialogProps, UserFormFields } from './types';
@@ -63,7 +63,7 @@ export function AddEditUserFormDialog({
 
   const onFormSubmit: SubmitHandler<UserFormFields> = (data) => {
     onClose?.();
-    onSubmit?.({ ...data, pincode: DefaultPinCode } satisfies User);
+    onSubmit?.({ ...data, pincode: DEFAULT_PIN_CODE } satisfies User);
   };
 
   return (

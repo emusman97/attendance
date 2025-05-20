@@ -13,10 +13,10 @@ export function Alert({
   return (
     <MUIAlert {...restProps}>
       <Box>
-        <Typography sx={{ fontWeight: '500', color: Theme.colors.InfoAlert }}>
+        <Typography sx={{ fontWeight: '500', color: Theme.colors.infoAlert }}>
           {title}
         </Typography>
-        <Typography sx={{ color: Theme.colors.InfoAlert }}>
+        <Typography sx={{ color: Theme.colors.infoAlert }}>
           {description}
         </Typography>
       </Box>

@@ -1,17 +1,15 @@
 import type { User } from '../models';
 
 export const AttrValues = {
-  Status: 'status',
-  Present: 'present',
-  Absent: 'absent',
-  Leave: 'leave',
+  status: 'status',
+  present: 'present',
+  absent: 'absent',
+  leave: 'leave',
 } as const;
-
-export const OfficeHoursTimeRegex = /^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/;
 
 export const DELETE_USER_SNACKBAR_HIDE_TIMEOUT = 6000;
 
-export const DefaultPinCode: NonNullable<User['pincode']> = '0000';
+export const DEFAULT_PIN_CODE: NonNullable<User['pincode']> = '0000';
 
 export const DEFAULT_ITEMS_PER_PAGE = 5;
 

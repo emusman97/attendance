@@ -7,12 +7,12 @@ import SettingsIcon from '@mui/icons-material/Settings';
 
 export const routeConfig = () => [
   {
-    path: RoutePaths.AdminDashboard,
+    path: RoutePaths.adminDashboard,
     breadcrumb: AppStrings.dashboard,
     icon: HomeIcon,
     children: [
       {
-        path: RoutePaths.Users,
+        path: RoutePaths.users,
         breadcrumb: AppStrings.users,
         icon: GroupIcon,
         children: [
@@ -24,7 +24,7 @@ export const routeConfig = () => [
         ],
       },
       {
-        path: RoutePaths.Settings,
+        path: RoutePaths.settings,
         breadcrumb: AppStrings.settings,
         icon: SettingsIcon,
       },
