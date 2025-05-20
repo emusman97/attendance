@@ -2,6 +2,7 @@ import type {
   TableProps as MUITableProps,
   PaginationProps,
   StackProps,
+  TableContainerProps,
 } from '@mui/material';
 import type { ReactNode } from 'react';
 
@@ -26,5 +27,6 @@ export interface TableProps<T> extends StackProps {
   columns: Columns<T>;
   data: T[];
   pagination: PaginationOptions;
+  tableContainerProps?: TableContainerProps;
   tableComponentProps?: MUITableProps;
 }

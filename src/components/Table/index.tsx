@@ -18,6 +18,7 @@ export function Table<T extends AnyData>({
   columns,
   data,
   pagination,
+  tableContainerProps,
   tableComponentProps,
   ...restProps
 }: TableProps<T>): JSX.Element {
@@ -33,7 +34,7 @@ export function Table<T extends AnyData>({
 
   return (
     <Stack {...restProps}>
-      <TableContainer>
+      <TableContainer {...tableContainerProps}>
         <MUITable stickyHeader {...tableComponentProps}>
           <TableHead>
             <TableRow>

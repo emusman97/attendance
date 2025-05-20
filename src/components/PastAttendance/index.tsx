@@ -76,7 +76,7 @@ export function PastAttendace({
       </Box>
 
       <Table
-        sx={{ mt: '2rem', maxHeight: '30vh' }}
+        tableContainerProps={{ sx: { mt: '2rem', maxHeight: '30vh' } }}
         data={filteredAttendance}
         columns={[
           { id: 'date', label: AppStrings.Date },
