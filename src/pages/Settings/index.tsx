@@ -1,15 +1,15 @@
-import { Container, Fab, Typography } from '@mui/material';
-import Snackbar from '@mui/joy/Snackbar';
-import Stack from '@mui/material/Stack';
 import DoneIcon from '@mui/icons-material/Done';
-import { useRef, useState, type JSX } from 'react';
-import { AppStrings, OfficeHoursTimeRegex } from '../../constants';
-import { InputField, NavBreadcrumbs } from '../../components';
-import { useForm, type FieldError, type SubmitHandler } from 'react-hook-form';
-import type { FormFields } from './types';
+import Snackbar from '@mui/joy/Snackbar';
+import { Container, Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
 import { differenceInHours, parse, startOfDay } from 'date-fns';
-import { safeParseNumber } from '../../utils';
+import { useRef, useState, type JSX } from 'react';
+import { useForm, type FieldError, type SubmitHandler } from 'react-hook-form';
+import { FAB, InputField, NavBreadcrumbs } from '../../components';
+import { AppStrings, OfficeHoursTimeRegex } from '../../constants';
 import { UserMockService } from '../../mockService';
+import { safeParseNumber } from '../../utils';
+import type { FormFields } from './types';
 
 export function SettingsPage(): JSX.Element {
   const [successSnackbarShown, setSuccessSnackbarShown] = useState(false);
@@ -98,6 +98,7 @@ export function SettingsPage(): JSX.Element {
     <Stack flex={1}>
       <Container sx={{ flex: 1 }}>
         <NavBreadcrumbs />
+
         <Stack alignItems="flex-start">
           <Typography variant="h5" fontWeight={400}>
             {AppStrings.OfficeHours}
@@ -145,15 +146,13 @@ export function SettingsPage(): JSX.Element {
           </form>
         </Stack>
       </Container>
-      <Fab
+
+      <FAB
         sx={{ alignSelf: 'flex-end', right: 25 }}
-        variant="extended"
-        color="primary"
         onClick={handleSaveChanges}
-      >
-        {AppStrings.SaveChanges}
-        <DoneIcon sx={{ ml: 1 }} />
-      </Fab>
+        title={AppStrings.SaveChanges}
+        RightIcon={<DoneIcon sx={{ ml: 1 }} />}
+      />
 
       <Snackbar
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}

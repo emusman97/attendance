@@ -1,19 +1,9 @@
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import {
-  Button,
-  ButtonGroup,
-  ClickAwayListener,
-  Container,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-} from '@mui/material';
+import { Container } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
 import { useParams } from 'react-router';
 import {
+  MenuButton,
   NavBreadcrumbs,
   PastAttendace,
   type AddEditUserFormType,
@@ -25,7 +15,6 @@ import {
 } from '../../constants';
 import {
   useAddEditUser,
-  useBooleanState,
   useDeleteUser,
   useDeleteUserSnackbar,
 } from '../../hooks';
@@ -56,7 +45,6 @@ export function UserPage(): JSX.Element {
   const [attendance, setAttendace] = useState(() =>
     UserMockService.findAttendance(params.userId ?? '')
   );
-  const [menuOpened, openMenu, closeMenu] = useBooleanState();
 
   const timerRef = useRef<NodeJS.Timeout>(null);
 
@@ -71,8 +59,6 @@ export function UserPage(): JSX.Element {
         timerRef.current = setTimeout(goBack, DeleteUserSnackbarHideTimeout);
       }, []),
     });
-
-  const anchorElRef = useRef<HTMLDivElement>(null);
 
   const handleFilterButtonClick = (filterValue: string) => {
     if (filterValue === AttrValues.Status) {
@@ -107,45 +93,17 @@ export function UserPage(): JSX.Element {
       <Container sx={{ flex: 1 }}>
         <NavBreadcrumbs
           CrumbsLeftContent={
-            <>
-              <ButtonGroup
-                ref={anchorElRef}
-                id="btn-group"
-                size="medium"
-                variant="outlined"
-              >
-                <Button onClick={handleEditUser}>{AppStrings.Edit}</Button>
-                <Button size="small" onClick={openMenu}>
-                  <ArrowDropDownIcon />
-                </Button>
-              </ButtonGroup>
-              <Popper
-                sx={{ zIndex: 1 }}
-                open={menuOpened}
-                anchorEl={anchorElRef.current}
-                role={undefined}
-                transition
-                disablePortal
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === 'bottom' ? 'center top' : 'center bottom',
-                    }}
-                  >
-                    <Paper>
-                      <ClickAwayListener onClickAway={closeMenu}>
-                        <MenuList autoFocusItem onClick={handleDeleteUser}>
-                          <MenuItem>{AppStrings.Delete}</MenuItem>
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
-            </>
+            <MenuButton
+              mainTitle={AppStrings.Edit}
+              onClick={handleEditUser}
+              menuItems={[
+                {
+                  id: '1',
+                  title: AppStrings.Delete,
+                  onClick: handleDeleteUser,
+                },
+              ]}
+            />
           }
         />
         <PastAttendace
