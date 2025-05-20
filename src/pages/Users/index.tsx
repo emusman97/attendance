@@ -5,21 +5,12 @@ import {
   ButtonGroup,
   ClickAwayListener,
   Container,
-  Fab,
   Grow,
   MenuItem,
   MenuList,
-  Pagination,
   Paper,
   Popper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
   type ClickAwayListenerProps,
-  type PaginationProps,
 } from '@mui/material';
 import Stack from '@mui/material/Stack';
 import { useCallback, useMemo, useState, type JSX } from 'react';
@@ -28,6 +19,7 @@ import {
   FAB,
   NavBreadcrumbs,
   SearchFilter,
+  Table,
   UserInfo,
   type AddEditUserFormType,
 } from '../../components';
@@ -36,9 +28,8 @@ import {
   useAddEditUser,
   useDeleteUser,
   useDeleteUserSnackbar,
-  usePagination,
 } from '../../hooks';
-import type { User, UserId } from '../../models';
+import type { User, UserId, Users } from '../../models';
 import { usersActions } from '../../state';
 import { useAppDispatch, useSelectAllUsers } from '../../state/hooks';
 import { filterByKeys } from '../../utils';
@@ -70,25 +61,29 @@ export function UsersPage(): JSX.Element {
       }, []),
     });
 
-  const filteredUsers = useMemo(() => {
-    const searchFilteredUsers = filterByKeys(
+  const tableData = useMemo(() => {
+    let searchFilteredUsers: Users = [];
+
+    searchFilteredUsers = filterByKeys(
       allUsers,
       ['fname', 'lname', 'designation'],
       query
     );
 
     if (appliedFilter !== NoneValue) {
-      return searchFilteredUsers.filter(
+      searchFilteredUsers = searchFilteredUsers.filter(
         (user) => user.designationCode === appliedFilter
       );
     }
 
-    return searchFilteredUsers;
+    return searchFilteredUsers.map((user) => ({
+      user,
+      position: user.designation,
+      email: user.email,
+      totalHours: 180,
+      averageHours: 7.5,
+    }));
   }, [allUsers, appliedFilter, query]);
-  const { currentData, currentPage, totalPages, goToPage } = usePagination({
-    data: filteredUsers,
-    itemsPerPage: 5,
-  });
   const navigate = useNavigate();
   const { showDeleteUserSnackbar, renderSnackbar } = useDeleteUserSnackbar();
   const { showDeleteUserDialog, renderDialog } = useDeleteUser({
@@ -108,7 +103,6 @@ export function UsersPage(): JSX.Element {
   };
   const handleApplyFilter = () => {
     setAppliedFilter(selectedPosition);
-    goToPage(1);
   };
   const handleSetAnchorEl = (userId: UserId) => {
     const el = document.getElementById(createButtonGroupId(userId));
@@ -137,9 +131,6 @@ export function UsersPage(): JSX.Element {
   const handleDeleteUser = (user: User) => () => {
     showDeleteUserDialog(user);
   };
-  const handlePageChange: PaginationProps['onChange'] = (_, page) => {
-    goToPage(page);
-  };
 
   return (
     <Stack flex={1}>
@@ -159,47 +150,48 @@ export function UsersPage(): JSX.Element {
           />
 
           <Stack flex={1}>
-            <TableContainer sx={{ height: 450 }}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>{AppStrings.Name}</TableCell>
-                    <TableCell>{AppStrings.Position}</TableCell>
-                    <TableCell>{AppStrings.Email}</TableCell>
-                    <TableCell>{AppStrings.TotalHours}</TableCell>
-                    <TableCell>{AppStrings.DailyAverageHours}</TableCell>
-                    <TableCell></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {currentData.map((row) => (
-                    <TableRow key={row.id}>
-                      <TableCell>
-                        <UserInfo user={row} showDesignation={false} />
-                      </TableCell>
-                      <TableCell>{row.email}</TableCell>
-                      <TableCell>{row.designation}</TableCell>
-                      <TableCell>160</TableCell>
-                      <TableCell>8.0</TableCell>
-                      <TableCell>
+            <Table
+              tableContainerProps={{ sx: { height: 450 } }}
+              data={tableData}
+              columns={[
+                {
+                  id: 'user',
+                  label: AppStrings.Name,
+                  formatValue(value) {
+                    return (
+                      <UserInfo user={value as User} showDesignation={false} />
+                    );
+                  },
+                },
+                { id: 'position', label: AppStrings.Position },
+                { id: 'email', label: AppStrings.Email },
+                { id: 'totalHours', label: AppStrings.TotalHours },
+                { id: 'averageHours', label: AppStrings.DailyAverageHours },
+                {
+                  id: 'user',
+                  formatValue(value) {
+                    const user = value as User;
+
+                    return (
+                      <>
                         <ButtonGroup
-                          id={createButtonGroupId(row.id ?? '')}
+                          id={createButtonGroupId(user.id ?? '')}
                           size="medium"
                           variant="outlined"
                         >
-                          <Button onClick={handleViewUser(row.id ?? '')}>
+                          <Button onClick={handleViewUser(user.id ?? '')}>
                             {AppStrings.View}
                           </Button>
                           <Button
                             size="small"
-                            onClick={handleToggle(row.id ?? '')}
+                            onClick={handleToggle(user.id ?? '')}
                           >
                             <ArrowDropDownIcon />
                           </Button>
                         </ButtonGroup>
                         <Popper
                           sx={{ zIndex: 1 }}
-                          open={menuOpenedId === row.id}
+                          open={menuOpenedId === user.id}
                           anchorEl={anchorEl}
                           role={undefined}
                           transition
@@ -218,10 +210,10 @@ export function UsersPage(): JSX.Element {
                               <Paper>
                                 <ClickAwayListener onClickAway={handleClose}>
                                   <MenuList autoFocusItem>
-                                    <MenuItem onClick={handleEditUser(row)}>
+                                    <MenuItem onClick={handleEditUser(user)}>
                                       {AppStrings.Edit}
                                     </MenuItem>
-                                    <MenuItem onClick={handleDeleteUser(row)}>
+                                    <MenuItem onClick={handleDeleteUser(user)}>
                                       {AppStrings.Delete}
                                     </MenuItem>
                                   </MenuList>
@@ -230,21 +222,14 @@ export function UsersPage(): JSX.Element {
                             </Grow>
                           )}
                         </Popper>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-
-            <Pagination
-              sx={{ mt: '1rem', alignSelf: 'center' }}
-              color="primary"
-              count={totalPages}
-              showFirstButton
-              showLastButton
-              page={currentPage}
-              onChange={handlePageChange}
+                      </>
+                    );
+                  },
+                },
+              ]}
+              pagination={{
+                hasPagination: true,
+              }}
             />
           </Stack>
         </Stack>
