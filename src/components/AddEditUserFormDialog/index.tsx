@@ -8,7 +8,7 @@ import {
   Stack,
 } from '@mui/material';
 import { useForm, type SubmitHandler } from 'react-hook-form';
-import { AppStrings, DefaultPinCode } from '../../constants';
+import { AppStrings, DEFAULT_PIN_CODE } from '../../constants';
 import type { User } from '../../models';
 import { InputField } from '../InputField';
 import type { AddEditUserFormDialogProps, UserFormFields } from './types';
@@ -30,32 +30,32 @@ export function AddEditUserFormDialog({
   } = useForm<UserFormFields>({ defaultValues: { ...user } });
 
   const title = () =>
-    type === 'add' ? AppStrings.AddUser : AppStrings.EditUser;
+    type === 'add' ? AppStrings.addUser : AppStrings.editUser;
   const actions = () =>
     type === 'add' ? (
       <>
-        <Button onClick={onClose}>{AppStrings.Nevermind}</Button>
-        <Button type="submit">{AppStrings.AddUser}</Button>
+        <Button onClick={onClose}>{AppStrings.nevermind}</Button>
+        <Button type="submit">{AppStrings.addUser}</Button>
       </>
     ) : (
       <>
         <Button onClick={onClose} color="error">
-          {AppStrings.DiscardChanges}
+          {AppStrings.discardChanges}
         </Button>
-        <Button type="submit">{AppStrings.Save}</Button>
+        <Button type="submit">{AppStrings.save}</Button>
       </>
     );
   const helperText = () => {
     if (errors.fname?.type === 'required') {
-      return AppStrings.FirstNameEmpty;
+      return AppStrings.firstNameEmpty;
     } else if (errors.lname?.type === 'required') {
-      return AppStrings.LastNameEmpty;
+      return AppStrings.lastNameEmpty;
     } else if (errors.designation?.type === 'required') {
-      return AppStrings.DesignationEmpty;
+      return AppStrings.designationEmpty;
     } else if (errors.email?.type === 'required') {
-      return AppStrings.EmailEmpty;
+      return AppStrings.emailEmpty;
     } else if (errors.email?.type === 'pattern') {
-      return AppStrings.EmailInvalid;
+      return AppStrings.emailInvalid;
     }
 
     return '';
@@ -63,7 +63,7 @@ export function AddEditUserFormDialog({
 
   const onFormSubmit: SubmitHandler<UserFormFields> = (data) => {
     onClose?.();
-    onSubmit?.({ ...data, pincode: DefaultPinCode } satisfies User);
+    onSubmit?.({ ...data, pincode: DEFAULT_PIN_CODE } satisfies User);
   };
 
   return (
@@ -79,30 +79,30 @@ export function AddEditUserFormDialog({
         <Stack gap={2}>
           <Stack flexDirection="row" alignItems="center" gap={2}>
             <InputField
-              label={AppStrings.FirstName}
-              placeholder={AppStrings.FirstName}
+              label={AppStrings.firstName}
+              placeholder={AppStrings.firstName}
               error={!!errors.fname}
               helperText={helperText()}
               {...register('fname', { required: true })}
             />
             <InputField
-              label={AppStrings.LastName}
-              placeholder={AppStrings.LastName}
+              label={AppStrings.lastName}
+              placeholder={AppStrings.lastName}
               error={!!errors.lname}
               helperText={helperText()}
               {...register('lname', { required: true })}
             />
           </Stack>
           <InputField
-            label={AppStrings.Designation}
-            placeholder={AppStrings.Designation}
+            label={AppStrings.designation}
+            placeholder={AppStrings.designation}
             error={!!errors.designation}
             helperText={helperText()}
             {...register('designation', { required: true })}
           />
           <InputField
-            label={AppStrings.Email}
-            placeholder={AppStrings.Email}
+            label={AppStrings.email}
+            placeholder={AppStrings.email}
             error={!!errors.lname}
             helperText={helperText()}
             {...register('email', { required: true, pattern: EmailRegex })}

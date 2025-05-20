@@ -8,7 +8,7 @@ import type {
   Users,
 } from '../models';
 import type { UserCredentials } from '../state/slices';
-import { DefaultPinCode } from '../constants';
+import { DEFAULT_PIN_CODE } from '../constants';
 
 function generateRandomAttendance() {
   const attendanceData: Attendances = [];
@@ -89,7 +89,7 @@ function generateUser(index: number): User {
     designation,
     designationCode,
     role: 'user',
-    pincode: DefaultPinCode,
+    pincode: DEFAULT_PIN_CODE,
   };
 }
 

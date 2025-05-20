@@ -32,13 +32,13 @@ export function SignInPage(): JSX.Element {
   const getHelperText = (forField: FieldError | undefined) => {
     if (forField === errors.username) {
       if (errors.username?.type === 'required') {
-        return AppStrings.UsernameNotEmpty;
+        return AppStrings.usernameNotEmpty;
       }
     } else {
       if (errors.pincode?.type === 'required') {
-        return AppStrings.PinCodeNotEmpty;
+        return AppStrings.pinCodeNotEmpty;
       } else if (errors.pincode?.type === 'pattern') {
-        return AppStrings.PinCodePatternError;
+        return AppStrings.pinCodePatternError;
       }
     }
 
@@ -75,11 +75,11 @@ export function SignInPage(): JSX.Element {
   useEffect(() => {
     if (info) {
       if (info.role === 'admin') {
-        navigate(RoutePaths.AdminRoot, { replace: true });
+        navigate(RoutePaths.adminRoot, { replace: true });
       } else if (firstLogin) {
-        navigate(RoutePaths.ChangePassword, { replace: true });
+        navigate(RoutePaths.changePassword, { replace: true });
       } else {
-        navigate(RoutePaths.Dashboard, { replace: true });
+        navigate(RoutePaths.dashboard, { replace: true });
       }
       dispatch(userActions.clearSuccess());
     }
@@ -89,7 +89,7 @@ export function SignInPage(): JSX.Element {
     <AuthLayout>
       <form className={styles.container} onSubmit={handleSubmit(onSubmit)}>
         <Typography className={styles.headingText} variant="h5">
-          {AppStrings.SignIn}
+          {AppStrings.signIn}
         </Typography>
 
         {!!error && (
@@ -101,20 +101,20 @@ export function SignInPage(): JSX.Element {
         <InputField
           disabled={loading}
           sx={{ mt: 2 }}
-          label={AppStrings.Username}
-          placeholder={AppStrings.Username}
+          label={AppStrings.username}
+          placeholder={AppStrings.username}
           error={!!errors.username}
           helperText={getHelperText(errors.username)}
           {...register('username', { required: true })}
         />
         <PasswordField
           containerProps={{ sx: { mt: 2, mb: 2 } }}
-          label={AppStrings.PinCode}
+          label={AppStrings.pinCode}
           helperText={getHelperText(errors.pincode)}
           inputProps={{
             disabled: loading,
             error: !!errors.pincode,
-            placeholder: AppStrings.PinCode,
+            placeholder: AppStrings.pinCode,
             slotProps: { input: { maxLength: 4 } },
             ...register('pincode', {
               required: true,
@@ -134,7 +134,7 @@ export function SignInPage(): JSX.Element {
           disabled={loading}
           type="submit"
           sx={{ mt: 2 }}
-          text={AppStrings.SignIn}
+          text={AppStrings.signIn}
         />
       </form>
     </AuthLayout>

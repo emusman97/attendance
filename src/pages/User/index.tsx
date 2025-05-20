@@ -1,54 +1,17 @@
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import {
-  Button,
-  ButtonGroup,
-  ClickAwayListener,
-  Container,
-  Grow,
-  MenuItem,
-  MenuList,
-  Paper,
-  Popper,
-} from '@mui/material';
+import { Container } from '@mui/material';
 import Stack from '@mui/material/Stack';
-import { useCallback, useEffect, useRef, useState, type JSX } from 'react';
+import { useState, type JSX } from 'react';
 import { useParams } from 'react-router';
-import {
-  NavBreadcrumbs,
-  PastAttendace,
-  type AddEditUserFormType,
-} from '../../components';
-import {
-  AppStrings,
-  AttrValues,
-  DeleteUserSnackbarHideTimeout,
-} from '../../constants';
-import {
-  useAddEditUser,
-  useBooleanState,
-  useDeleteUser,
-  useDeleteUserSnackbar,
-} from '../../hooks';
+import { MenuButton, NavBreadcrumbs, PastAttendace } from '../../components';
+import { AppStrings, AttrValues } from '../../constants';
+import { useAddEditUser, useDeleteUser } from '../../hooks';
 import { UserMockService } from '../../mockService';
-import type { AttendanceStatus, User } from '../../models';
-import { useAppDispatch, usersActions, useSelectUserById } from '../../state';
+import type { AttendanceStatus } from '../../models';
+import { useSelectUserById } from '../../state';
 
 export function UserPage(): JSX.Element {
-  const dispatch = useAppDispatch();
-
   const params = useParams<{ userId: string }>();
-  const { showAddEditUserDialog, renderDialog } = useAddEditUser({
-    onSubmit: useCallback((type: AddEditUserFormType, user: User) => {
-      if (type === 'edit') {
-        dispatch(
-          usersActions.editUser({
-            userId: user?.id ?? '',
-            updatedUserInfo: user,
-          })
-        );
-      }
-    }, []),
-  });
+  const { showAddEditUserDialog, renderDialog } = useAddEditUser({});
   const userId = params.userId ?? '';
 
   const info = useSelectUserById(userId);
@@ -56,35 +19,21 @@ export function UserPage(): JSX.Element {
   const [attendance, setAttendace] = useState(() =>
     UserMockService.findAttendance(params.userId ?? '')
   );
-  const [menuOpened, openMenu, closeMenu] = useBooleanState();
 
-  const timerRef = useRef<NodeJS.Timeout>(null);
-
-  const goBack = () => window.history.back();
-
-  const { showDeleteUserSnackbar, renderSnackbar } = useDeleteUserSnackbar();
   const { showDeleteUserDialog, renderDialog: renderDeleteUserDialog } =
-    useDeleteUser({
-      onConfirmDeleteUser: useCallback((userToDelete: User) => {
-        dispatch(usersActions.deleteUser(userToDelete.id ?? ''));
-        showDeleteUserSnackbar(userToDelete, goBack);
-        timerRef.current = setTimeout(goBack, DeleteUserSnackbarHideTimeout);
-      }, []),
-    });
-
-  const anchorElRef = useRef<HTMLDivElement>(null);
+    useDeleteUser({});
 
   const handleFilterButtonClick = (filterValue: string) => {
-    if (filterValue === AttrValues.Status) {
+    if (filterValue === AttrValues.status) {
       setAttendace(UserMockService.findAttendance(info?.id ?? ''));
     } else {
       let status: AttendanceStatus | null = null;
 
-      if (filterValue === AttrValues.Present) {
+      if (filterValue === AttrValues.present) {
         status = 'present';
-      } else if (filterValue === AttrValues.Absent) {
+      } else if (filterValue === AttrValues.absent) {
         status = 'absent';
-      } else if (filterValue === AttrValues.Leave) {
+      } else if (filterValue === AttrValues.leave) {
         status = 'leave';
       }
 
@@ -100,52 +49,22 @@ export function UserPage(): JSX.Element {
     showDeleteUserDialog(info ?? {});
   };
 
-  useEffect(() => () => clearTimeout(timerRef.current ?? -1), []);
-
   return (
     <Stack flex={1}>
       <Container sx={{ flex: 1 }}>
         <NavBreadcrumbs
           CrumbsLeftContent={
-            <>
-              <ButtonGroup
-                ref={anchorElRef}
-                id="btn-group"
-                size="medium"
-                variant="outlined"
-              >
-                <Button onClick={handleEditUser}>{AppStrings.Edit}</Button>
-                <Button size="small" onClick={openMenu}>
-                  <ArrowDropDownIcon />
-                </Button>
-              </ButtonGroup>
-              <Popper
-                sx={{ zIndex: 1 }}
-                open={menuOpened}
-                anchorEl={anchorElRef.current}
-                role={undefined}
-                transition
-                disablePortal
-              >
-                {({ TransitionProps, placement }) => (
-                  <Grow
-                    {...TransitionProps}
-                    style={{
-                      transformOrigin:
-                        placement === 'bottom' ? 'center top' : 'center bottom',
-                    }}
-                  >
-                    <Paper>
-                      <ClickAwayListener onClickAway={closeMenu}>
-                        <MenuList autoFocusItem onClick={handleDeleteUser}>
-                          <MenuItem>{AppStrings.Delete}</MenuItem>
-                        </MenuList>
-                      </ClickAwayListener>
-                    </Paper>
-                  </Grow>
-                )}
-              </Popper>
-            </>
+            <MenuButton
+              mainTitle={AppStrings.edit}
+              onClick={handleEditUser}
+              menuItems={[
+                {
+                  id: '1',
+                  title: AppStrings.delete,
+                  onClick: handleDeleteUser,
+                },
+              ]}
+            />
           }
         />
         <PastAttendace
@@ -164,7 +83,6 @@ export function UserPage(): JSX.Element {
 
       {renderDialog()}
       {renderDeleteUserDialog()}
-      {renderSnackbar()}
     </Stack>
   );
 }

@@ -1,26 +1,58 @@
-import { Container, Fab, Typography } from '@mui/material';
-import Snackbar from '@mui/joy/Snackbar';
-import Stack from '@mui/material/Stack';
 import DoneIcon from '@mui/icons-material/Done';
+import Snackbar from '@mui/joy/Snackbar';
+import { Container, Typography } from '@mui/material';
+import Stack from '@mui/material/Stack';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { TimeField } from '@mui/x-date-pickers/TimeField';
+import { differenceInHours, format, parse } from 'date-fns';
 import { useRef, useState, type JSX } from 'react';
-import { AppStrings, OfficeHoursTimeRegex } from '../../constants';
-import { InputField, NavBreadcrumbs } from '../../components';
-import { useForm, type FieldError, type SubmitHandler } from 'react-hook-form';
-import type { FormFields } from './types';
-import { differenceInHours, parse, startOfDay } from 'date-fns';
-import { safeParseNumber } from '../../utils';
+import {
+  Controller,
+  useForm,
+  type FieldError,
+  type SubmitHandler,
+} from 'react-hook-form';
+import { FAB, InputField, NavBreadcrumbs } from '../../components';
+import { AppStrings, TIME_FORMAT } from '../../constants';
+
 import { UserMockService } from '../../mockService';
+import { safeParseNumber } from '../../utils';
+import type { FormFields } from './types';
 
 export function SettingsPage(): JSX.Element {
   const [successSnackbarShown, setSuccessSnackbarShown] = useState(false);
-  const [officeHours] = useState(() => UserMockService.getOfficeHours());
+  const [time] = useState(() => {
+    const currentDate = new Date();
+    const officeHours = UserMockService.getOfficeHours();
+
+    const startTime = parse(
+      officeHours.startTime ?? '',
+      TIME_FORMAT,
+      currentDate
+    );
+    const finishTime = parse(
+      officeHours.finishTime ?? '',
+      TIME_FORMAT,
+      currentDate
+    );
+
+    return { startTime, finishTime, workingHours: officeHours.workingHours };
+  });
   const {
+    control,
     formState: { errors },
     register,
     handleSubmit,
     setError,
     clearErrors,
-  } = useForm<FormFields>({ defaultValues: officeHours });
+  } = useForm<FormFields>({
+    defaultValues: {
+      startTime: time.startTime,
+      finishTime: time.finishTime,
+      workingHours: time.workingHours,
+    },
+  });
 
   const submitBtnRef = useRef<HTMLButtonElement>(null);
 
@@ -29,25 +61,25 @@ export function SettingsPage(): JSX.Element {
       if (errors.startTime?.type === 'validate') {
         return errors.startTime.message;
       } else if (errors.startTime?.type === 'required') {
-        return AppStrings.StartTimeEmpty;
+        return AppStrings.startTimeEmpty;
       } else if (errors.startTime?.type === 'pattern') {
-        return AppStrings.StartTimePatternError;
+        return AppStrings.startTimePatternError;
       }
     } else if (forField === errors.finishTime) {
       if (errors.finishTime?.type === 'validate') {
         return errors.finishTime.message;
       } else if (errors.finishTime?.type === 'required') {
-        return AppStrings.FinishTimeEmpty;
+        return AppStrings.finishTimeEmpty;
       } else if (errors.finishTime?.type === 'pattern') {
-        return AppStrings.FinishTimePatternError;
+        return AppStrings.finishTimePatternError;
       }
     } else {
       if (errors.workingHours?.type === 'validate') {
         return errors.workingHours.message;
       } else if (errors.workingHours?.type === 'required') {
-        return AppStrings.WorkingHoursEmpty;
+        return AppStrings.workingHoursEmpty;
       } else {
-        return AppStrings.InvalidWorkingHours;
+        return AppStrings.invalidWorkingHours;
       }
     }
 
@@ -57,21 +89,20 @@ export function SettingsPage(): JSX.Element {
   const onSubmit: SubmitHandler<FormFields> = (data) => {
     clearErrors();
 
-    const refDate = startOfDay(new Date());
-    const startTime = parse(data.startTime, 'hh:mm a', refDate);
-    const endTime = parse(data.finishTime, 'hh:mm a', refDate);
+    const startTime = data.startTime;
+    const endTime = data.finishTime;
     const hours = safeParseNumber(data.workingHours);
 
     if (startTime >= endTime) {
       setError('startTime', {
         type: 'validate',
-        message: AppStrings.InvalidStartTime,
+        message: AppStrings.invalidStartTime,
       });
       return;
     } else if (endTime <= startTime) {
       setError('finishTime', {
         type: 'validate',
-        message: AppStrings.InvalidFinishTime,
+        message: AppStrings.invalidFinishTime,
       });
       return;
     }
@@ -79,12 +110,16 @@ export function SettingsPage(): JSX.Element {
     if (differenceInHours(endTime, startTime) !== hours) {
       setError('workingHours', {
         type: 'validate',
-        message: AppStrings.InconsistenWorkingHours,
+        message: AppStrings.inconsistenWorkingHours,
       });
       return;
     }
 
-    UserMockService.setOfficeHours(data);
+    UserMockService.setOfficeHours({
+      workingHours: data.workingHours,
+      startTime: format(startTime, TIME_FORMAT),
+      finishTime: format(endTime, TIME_FORMAT),
+    });
     setSuccessSnackbarShown(true);
   };
   const handleSaveChanges = () => {
@@ -95,75 +130,84 @@ export function SettingsPage(): JSX.Element {
   };
 
   return (
-    <Stack flex={1}>
-      <Container sx={{ flex: 1 }}>
-        <NavBreadcrumbs />
-        <Stack alignItems="flex-start">
-          <Typography variant="h5" fontWeight={400}>
-            {AppStrings.OfficeHours}
-          </Typography>
+    <LocalizationProvider dateAdapter={AdapterDateFns}>
+      <Stack flex={1}>
+        <Container sx={{ flex: 1 }}>
+          <NavBreadcrumbs />
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Stack mt={4} gap={1} width={300}>
-              <InputField
-                variant="standard"
-                placeholder={AppStrings.StartTime}
-                label={AppStrings.StartTime}
-                error={!!errors.startTime}
-                helperText={getHelperText(errors.startTime)}
-                {...register('startTime', {
-                  required: true,
-                  pattern: OfficeHoursTimeRegex,
-                })}
-              />
-              <InputField
-                variant="standard"
-                placeholder={AppStrings.FinishTime}
-                label={AppStrings.FinishTime}
-                error={!!errors.finishTime}
-                helperText={getHelperText(errors.finishTime)}
-                {...register('finishTime', {
-                  required: true,
-                  pattern: OfficeHoursTimeRegex,
-                })}
-              />
-              <InputField
-                variant="standard"
-                placeholder={AppStrings.WorkingHourse}
-                label={AppStrings.WorkingHourse}
-                type="number"
-                error={!!errors.workingHours}
-                helperText={getHelperText(errors.workingHours)}
-                {...register('workingHours', {
-                  required: true,
-                  min: 4,
-                })}
-              />
-            </Stack>
+          <Stack alignItems="flex-start">
+            <Typography variant="h5" fontWeight={400}>
+              {AppStrings.officeHours}
+            </Typography>
 
-            <button ref={submitBtnRef} hidden type="submit"></button>
-          </form>
-        </Stack>
-      </Container>
-      <Fab
-        sx={{ alignSelf: 'flex-end', right: 25 }}
-        variant="extended"
-        color="primary"
-        onClick={handleSaveChanges}
-      >
-        {AppStrings.SaveChanges}
-        <DoneIcon sx={{ ml: 1 }} />
-      </Fab>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Stack mt={4} gap={2} width={300}>
+                <Controller
+                  name="startTime"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <TimeField
+                      label={AppStrings.startTime}
+                      format={TIME_FORMAT}
+                      error={!!error}
+                      helperText={getHelperText(error)}
+                      value={new Date(field.value)}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
 
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-        color="success"
-        variant="solid"
-        open={successSnackbarShown}
-        onClose={handleSnackbarClose}
-      >
-        {AppStrings.OfficeHoursUpdated}
-      </Snackbar>
-    </Stack>
+                <Controller
+                  name="finishTime"
+                  control={control}
+                  render={({ field, fieldState: { error } }) => (
+                    <TimeField
+                      label={AppStrings.finishTime}
+                      format={TIME_FORMAT}
+                      error={!!error}
+                      helperText={getHelperText(error)}
+                      value={field.value}
+                      onChange={field.onChange}
+                    />
+                  )}
+                />
+
+                <InputField
+                  variant="standard"
+                  placeholder={AppStrings.workingHours}
+                  label={AppStrings.workingHours}
+                  type="number"
+                  error={!!errors.workingHours}
+                  helperText={getHelperText(errors.workingHours)}
+                  {...register('workingHours', {
+                    required: true,
+                    min: 4,
+                  })}
+                />
+              </Stack>
+
+              <button ref={submitBtnRef} hidden type="submit"></button>
+            </form>
+          </Stack>
+        </Container>
+
+        <FAB
+          sx={{ alignSelf: 'flex-end', right: 25 }}
+          onClick={handleSaveChanges}
+          title={AppStrings.saveChanges}
+          RightIcon={<DoneIcon sx={{ ml: 1 }} />}
+        />
+
+        <Snackbar
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+          color="success"
+          variant="solid"
+          open={successSnackbarShown}
+          onClose={handleSnackbarClose}
+        >
+          {AppStrings.officeHoursUpdated}
+        </Snackbar>
+      </Stack>
+    </LocalizationProvider>
   );
 }

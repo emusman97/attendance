@@ -20,7 +20,7 @@ export const loginUser = createAsyncThunk<
     if (user) {
       return user;
     } else {
-      return rejectWithValue(AppStrings.InvalidCreds);
+      return rejectWithValue(AppStrings.invalidCreds);
     }
   }
 );
@@ -40,13 +40,13 @@ export const changePinCode = createAsyncThunk<
       if (userId) {
         UserMockService.changePincode(userId, newPincode);
       } else {
-        rejectWithValue(AppStrings.NoUserLoggedIn);
+        rejectWithValue(AppStrings.noUserLoggedIn);
       }
     } catch (error) {
       if (isError(error)) {
-        rejectWithValue(error.message ?? AppStrings.SomethingWentWrong);
+        rejectWithValue(error.message ?? AppStrings.somethingWentWrong);
       } else {
-        rejectWithValue(AppStrings.SomethingWentWrong);
+        rejectWithValue(AppStrings.somethingWentWrong);
       }
     }
   }
