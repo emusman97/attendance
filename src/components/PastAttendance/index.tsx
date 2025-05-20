@@ -2,23 +2,15 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { Stack } from '@mui/material';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Pagination, { type PaginationProps } from '@mui/material/Pagination';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import { useMemo, useState, type JSX } from 'react';
 import { AppStrings } from '../../constants';
-import { usePagination } from '../../hooks';
-import { AttendanceChip } from '../AttendaceChip';
 import { InputField, type InputFieldProps } from '../InputField';
-import { ItemsPerPage } from './constants';
+import { Select, type SelectProps } from '../Select';
+import { Table } from '../Table';
 import { AttributeItems } from './data';
 import type { PastAttendaceProps } from './types';
-import { Select, type SelectProps } from '../Select';
+import { AttendanceChip } from '../AttendaceChip';
 
 export function PastAttendace({
   containerProps,
@@ -42,11 +34,6 @@ export function PastAttendace({
     );
   }, [attendance, query]);
 
-  const { currentData, currentPage, totalPages, goToPage } = usePagination({
-    data: filteredAttendance,
-    itemsPerPage: ItemsPerPage,
-  });
-
   const handleAttrValueChange: SelectProps['onValueChange'] = (newValue) => {
     setAtrrValue(newValue);
     onSelectedAttrChange?.(newValue);
@@ -58,9 +45,6 @@ export function PastAttendace({
     const value = event.currentTarget.value;
     setQuery(value);
     onSearchQueryChange?.(value);
-  };
-  const handlePageChange: PaginationProps['onChange'] = (_, page) => {
-    goToPage(page);
   };
 
   return (
@@ -91,35 +75,20 @@ export function PastAttendace({
         </IconButton>
       </Box>
 
-      <TableContainer sx={{ mt: '2rem', maxHeight: '30vh' }}>
-        <Table stickyHeader>
-          <TableHead>
-            <TableRow>
-              <TableCell>{AppStrings.Date}</TableCell>
-              <TableCell>{AppStrings.Status}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {currentData.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.date}</TableCell>
-                <TableCell>
-                  <AttendanceChip type={row.status ?? 'present'} />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-
-      <Pagination
-        sx={{ mt: '1rem', alignSelf: 'center' }}
-        color="primary"
-        count={totalPages}
-        showFirstButton
-        showLastButton
-        page={currentPage}
-        onChange={handlePageChange}
+      <Table
+        sx={{ mt: '2rem', maxHeight: '30vh' }}
+        tableComponentProps={{ stickyHeader: true }}
+        data={filteredAttendance}
+        columns={[
+          { id: 'date', label: AppStrings.Date },
+          {
+            id: 'status',
+            formatValue(_, row) {
+              return <AttendanceChip type={row.status ?? 'present'} />;
+            },
+          },
+        ]}
+        pagination={{ hasPagination: true }}
       />
     </Stack>
   );
