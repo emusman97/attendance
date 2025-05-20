@@ -148,7 +148,7 @@ export function SettingsPage(): JSX.Element {
                   render={({ field, fieldState: { error } }) => (
                     <TimeField
                       label={AppStrings.StartTime}
-                      format="hh:mm aa"
+                      format={TIME_FORMAT}
                       error={!!error}
                       helperText={getHelperText(error)}
                       value={new Date(field.value)}
@@ -163,7 +163,7 @@ export function SettingsPage(): JSX.Element {
                   render={({ field, fieldState: { error } }) => (
                     <TimeField
                       label={AppStrings.FinishTime}
-                      format="hh:mm aa"
+                      format={TIME_FORMAT}
                       error={!!error}
                       helperText={getHelperText(error)}
                       value={field.value}
