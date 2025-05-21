@@ -3,10 +3,9 @@ import Stack from '@mui/material/Stack';
 import { useState, type JSX } from 'react';
 import { useParams } from 'react-router';
 import { MenuButton, NavBreadcrumbs, PastAttendace } from '../../components';
-import { AppStrings, AttrValues } from '../../constants';
+import { AppStrings } from '../../constants';
 import { useAddEditUser, useDeleteUser } from '../../hooks';
 import { UserMockService } from '../../mockService';
-import type { AttendanceStatus } from '../../models';
 import { useSelectUserById } from '../../state';
 
 export function UserPage(): JSX.Element {
@@ -16,32 +15,13 @@ export function UserPage(): JSX.Element {
 
   const info = useSelectUserById(userId);
 
-  const [attendance, setAttendace] = useState(() =>
+  const [attendance] = useState(() =>
     UserMockService.findAttendance(params.userId ?? '')
   );
 
   const { showDeleteUserDialog, renderDialog: renderDeleteUserDialog } =
     useDeleteUser({});
 
-  const handleFilterButtonClick = (filterValue: string) => {
-    if (filterValue === AttrValues.status) {
-      setAttendace(UserMockService.findAttendance(info?.id ?? ''));
-    } else {
-      let status: AttendanceStatus | null = null;
-
-      if (filterValue === AttrValues.present) {
-        status = 'present';
-      } else if (filterValue === AttrValues.absent) {
-        status = 'absent';
-      } else if (filterValue === AttrValues.leave) {
-        status = 'leave';
-      }
-
-      if (status) {
-        setAttendace(UserMockService.filterAttendance(info?.id ?? '', status));
-      }
-    }
-  };
   const handleEditUser = () => {
     showAddEditUserDialog('edit', info);
   };
@@ -77,7 +57,6 @@ export function UserPage(): JSX.Element {
               mt: '2rem',
             },
           }}
-          onFilterButtonClick={handleFilterButtonClick}
         />
       </Container>
 
