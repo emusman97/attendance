@@ -14,3 +14,5 @@ export const DEFAULT_PIN_CODE: NonNullable<User['pincode']> = '0000';
 export const DEFAULT_ITEMS_PER_PAGE = 5;
 
 export const TIME_FORMAT = 'hh:mm aa';
+
+export const NONE_VALUE = 'none';

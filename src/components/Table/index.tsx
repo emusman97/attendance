@@ -78,3 +78,5 @@ export function Table<T extends AnyData>({
     </Stack>
   );
 }
+
+export * from './types';

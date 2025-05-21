@@ -2,27 +2,21 @@ import GroupIcon from '@mui/icons-material/Group';
 import { Button, Typography } from '@mui/material';
 import Container from '@mui/material/Container';
 import Stack from '@mui/material/Stack';
-import { useEffect, useMemo, useState, type JSX } from 'react';
+import { useEffect, useMemo, type JSX } from 'react';
 import { useNavigate } from 'react-router';
-import {
-  NavBreadcrumbs,
-  SearchFilter,
-  Table,
-  UserInfo,
-  type SearchFilterProps,
-} from '../../components';
+import { NavBreadcrumbs, SearchTable, UserInfo } from '../../components';
 import { AppStrings } from '../../constants';
 import { RoutePaths } from '../../routes';
 import { useAppDispatch, usersActions, useSelectAllUsers } from '../../state';
-import { filterByKeys } from '../../utils';
 import { StatusList } from './components';
+import type { FilterFn } from '../../types';
+import { makeFullName } from '../../utils';
 
 export function AdminDashboardPage(): JSX.Element {
   const dispatch = useAppDispatch();
 
   const allUsers = useSelectAllUsers();
 
-  const [query, setQuery] = useState('');
   const navigate = useNavigate();
 
   const data = useMemo(
@@ -36,19 +30,24 @@ export function AdminDashboardPage(): JSX.Element {
   );
   const tableData = useMemo(
     () =>
-      filterByKeys(data.all, ['fname', 'lname'], query).map((user) => ({
+      data.all.map((user) => ({
         user,
         totalHours: 160,
         averageHours: 8.0,
       })),
-    [data.all, query]
+    [data.all]
   );
 
-  const handleSearchTextChange: SearchFilterProps['onQueryChange'] = (
-    value
+  const usersFilterFunction: FilterFn<(typeof tableData)[number]> = (
+    data,
+    query
   ) => {
-    setQuery(value);
+    const filter =
+      `${makeFullName(data.user.fname ?? '', data.user.lname ?? '')} ${data.averageHours} ${data.totalHours}`.toLocaleLowerCase();
+
+    return filter.includes(query);
   };
+
   const gotoUsersPage = () => {
     navigate(RoutePaths.users);
   };
@@ -89,39 +88,32 @@ export function AdminDashboardPage(): JSX.Element {
         <Stack flex={1} gap={4}>
           <Typography variant="h5">{AppStrings.overallStats}</Typography>
 
-          <Stack gap={2}>
-            <SearchFilter
-              query={query}
-              onQueryChange={handleSearchTextChange}
-              RightComponent={
-                <Button
-                  variant="contained"
-                  startIcon={<GroupIcon />}
-                  onClick={gotoUsersPage}
-                >
-                  {AppStrings.manageUsers}
-                </Button>
-              }
-            />
-
-            <Table
-              gap={2}
-              tableContainerProps={{ sx: { height: 450 } }}
-              data={tableData}
-              columns={[
-                {
-                  id: 'user',
-                  label: AppStrings.name,
-                  formatValue(_, row) {
-                    return <UserInfo user={row.user} showDesignation={false} />;
-                  },
+          <SearchTable
+            data={tableData}
+            columns={[
+              {
+                id: 'user',
+                label: AppStrings.name,
+                formatValue(_, row) {
+                  return <UserInfo user={row.user} showDesignation={false} />;
                 },
-                { id: 'totalHours', label: AppStrings.totalHours },
-                { id: 'averageHours', label: AppStrings.dailyAverageHours },
-              ]}
-              pagination={{ hasPagination: true }}
-            />
-          </Stack>
+              },
+              { id: 'totalHours', label: AppStrings.totalHours },
+              { id: 'averageHours', label: AppStrings.dailyAverageHours },
+            ]}
+            showFilter={false}
+            searchFilterFunction={usersFilterFunction}
+            SearchFilterRightComponent={
+              <Button
+                variant="contained"
+                startIcon={<GroupIcon />}
+                onClick={gotoUsersPage}
+              >
+                {AppStrings.manageUsers}
+              </Button>
+            }
+            tableProps={{ tableContainerProps: { sx: { height: 450 } } }}
+          />
         </Stack>
       </Container>
     </Stack>
