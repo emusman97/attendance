@@ -11,6 +11,7 @@ export function SearchFilter({
   query,
   onQueryChange,
   showSelect,
+  selectionLabel,
   selectionOptions,
   selectedSelectionValue,
   onSelectionValueChange,
@@ -42,7 +43,7 @@ export function SearchFilter({
         {showSelect && (
           <Select
             sx={{ ml: '1rem', mr: '1rem', width: '15%' }}
-            label={AppStrings.attribute}
+            label={selectionLabel ?? ''}
             value={selectedSelectionValue ?? ''}
             onValueChange={onSelectionValueChange}
             options={selectionOptions ?? []}

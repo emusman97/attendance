@@ -5,6 +5,7 @@ import type { SelectItems } from '../../types';
 export interface SearchFilterProps extends StackProps {
   query: string;
   onQueryChange: (value: string) => void;
+  selectionLabel?: string;
   selectionOptions?: SelectItems;
   selectedSelectionValue?: string;
   onSelectionValueChange?: (value: string) => void;
